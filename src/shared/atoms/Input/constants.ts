@@ -1,0 +1,1 @@
+export const BASE_STYLES = "w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm font-medium text-gray-800 outline-none placeholder:text-gray-400 transition-all duration-150 ease-in-out focus:border-primary focus:ring-4 focus:ring-primary/20";
