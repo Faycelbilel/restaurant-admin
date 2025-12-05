@@ -9,7 +9,7 @@ import type { DataTableProps } from "./types";
 
 export function DataTable<TData = unknown>({
   columns,
-  data,
+  data = [],
   getRowKey = (_, index) => String(index),
   pagination = true,
   initialPageSize = 5,
@@ -31,18 +31,23 @@ export function DataTable<TData = unknown>({
 
   // Use external pagination if provided, otherwise use internal
   const isExternalPagination = !!externalPagination;
-  const activePage = isExternalPagination ? externalPagination.currentPage : currentPage;
-  const activePageSize = isExternalPagination ? externalPagination.pageSize : pageSize;
-  const activeTotalPages = isExternalPagination 
-    ? externalPagination.totalPages 
+  const activePage = isExternalPagination
+    ? externalPagination.currentPage
+    : currentPage;
+  const activePageSize = isExternalPagination
+    ? externalPagination.pageSize
+    : pageSize;
+  const activeTotalPages = isExternalPagination
+    ? externalPagination.totalPages
     : Math.ceil(data.length / activePageSize);
 
   // For internal pagination, slice the data
   const startIndex = (activePage - 1) * activePageSize;
   const endIndex = startIndex + activePageSize;
-  const paginatedData = pagination && !isExternalPagination 
-    ? data.slice(startIndex, endIndex) 
-    : data;
+  const paginatedData =
+    pagination && !isExternalPagination
+      ? data.slice(startIndex, endIndex)
+      : data;
 
   const gridTemplate = useMemo(() => {
     if (gridTemplateColumns) return gridTemplateColumns;
@@ -123,8 +128,8 @@ export function DataTable<TData = unknown>({
                     {column.render
                       ? column.render(row)
                       : column.accessor
-                      ? column.accessor(row)
-                      : null}
+                        ? column.accessor(row)
+                        : null}
                   </div>
                 ))}
               </div>
@@ -200,8 +205,8 @@ export function DataTable<TData = unknown>({
                       {column.render
                         ? column.render(row)
                         : column.accessor
-                        ? column.accessor(row)
-                        : null}
+                          ? column.accessor(row)
+                          : null}
                     </td>
                   ))}
                 </tr>
