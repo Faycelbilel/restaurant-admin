@@ -1,9 +1,8 @@
 "use client";
 
 import { useEffect, useMemo } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
-  ArrowLeft,
   MapPin,
   Phone,
   FileText,
@@ -31,7 +30,6 @@ import {
   TextWeight,
   BadgeVariant,
 } from "@/shared/types/enums";
-import { UserRole } from "@/shared/types";
 
 function RestaurantLayoutSkeleton() {
   return (
@@ -54,19 +52,35 @@ function RestaurantLayoutSkeleton() {
 
 export default function RestaurantLayout({
   children,
-  params,
 }: {
   children: React.ReactNode;
-  params: Promise<{ id: string }>;
 }) {
   const router = useRouter();
   const pathname = usePathname();
   const { user, restaurant, status } = useAuth();
 
-  const restaurantId = useMemo(() => {
-    const resolved = user?.restaurantId || restaurant?.id;
-    return resolved ? String(resolved) : undefined;
-  }, [restaurant?.id, user?.restaurantId]);
+  useEffect(() => {
+    if (status === AuthStatus.Unauthenticated) {
+      router.replace("/login");
+    }
+  }, [router, status]);
+
+  if (status === AuthStatus.Loading) {
+    return <RestaurantLayoutSkeleton />;
+  }
+
+  if (!restaurant) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px] gap-4">
+        <p className="text-lg text-gray-600">Restaurant not available. Please login again.</p>
+        <form action="/login">
+          <IconButton type="submit" variant={ButtonVariant.Primary} size={ButtonSize.Medium}>
+            Back to login
+          </IconButton>
+        </form>
+      </div>
+    );
+  }
 
   const tabs = [
     { id: "dashboard", label: "Dashboard", icon: LayoutGrid },
@@ -81,47 +95,7 @@ export default function RestaurantLayout({
     return last || "dashboard";
   }, [pathname]);
 
-  useEffect(() => {
-    // Enforce auth and ensure we only access dashboard if user/restaurant exist
-    params.then((resolvedParams) => {
-      const targetParamId = resolvedParams.id;
-      if (status === AuthStatus.Unauthenticated) {
-        router.replace("/login");
-        return;
-      }
-      if (!restaurantId || targetParamId !== restaurantId) {
-        // Align URL to authenticated restaurant
-        if (restaurantId) {
-          router.replace(`/restaurants/${restaurantId}/dashboard`);
-        }
-      }
-    });
-  }, [params, restaurantId, router, status]);
-
-  if (status === AuthStatus.Loading) {
-    return <RestaurantLayoutSkeleton />;
-  }
-
-  if (!restaurant || !restaurantId) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[400px] gap-4">
-        <p className="text-lg text-gray-600">Restaurant not available. Please login again.</p>
-        <form action="/login">
-          <IconButton type="submit" variant={ButtonVariant.Primary} size={ButtonSize.Medium}>
-            <ArrowLeft className="h-5 w-5" />
-          </IconButton>
-        </form>
-      </div>
-    );
-  }
-
   const isOpen = !restaurant.manuallyClosed;
-
-  const adminRestaurantId = user?.restaurantId || user?.id || restaurantId;
-  const backHref =
-    user?.role === UserRole.RestaurantAdmin && adminRestaurantId
-      ? `/restaurants/${adminRestaurantId}/dashboard`
-      : "/restaurants";
 
   return (
     <div className="flex flex-col gap-6 pb-10">
@@ -134,7 +108,7 @@ export default function RestaurantLayout({
               <button
                 key={tab.id}
                 type="button"
-                onClick={() => router.push(`/restaurants/${restaurantId}/${tab.id}`)}
+                onClick={() => router.push(`/restaurants/${tab.id}`)}
                 className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition ${
                   isActive
                     ? "bg-primary text-white shadow-sm"
@@ -153,16 +127,6 @@ export default function RestaurantLayout({
         <div className="flex flex-col gap-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <form action={backHref}>
-                <IconButton
-                  type="submit"
-                  variant={ButtonVariant.Primary}
-                  size={ButtonSize.Medium}
-                  aria-label="Back to restaurant selection"
-                >
-                  <ArrowLeft className="h-5 w-5" />
-                </IconButton>
-              </form>
               <div>
                 <Text
                   variant={TextVariant.Label}
@@ -233,9 +197,7 @@ export default function RestaurantLayout({
             </div>
           </div>
 
-          {/* Restaurant Information Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mt-4 p-4 bg-gray-50 rounded-2xl">
-            {/* Address */}
             <div className="flex items-start gap-2">
               <MapPin className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
               <div className="min-w-0">
@@ -244,7 +206,6 @@ export default function RestaurantLayout({
               </div>
             </div>
 
-            {/* Phone */}
             <div className="flex items-start gap-2">
               <Phone className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
               <div className="min-w-0">
@@ -253,7 +214,6 @@ export default function RestaurantLayout({
               </div>
             </div>
 
-            {/* License Number */}
             <div className="flex items-start gap-2">
               <FileText className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
               <div className="min-w-0">
@@ -262,7 +222,6 @@ export default function RestaurantLayout({
               </div>
             </div>
 
-            {/* Tax ID */}
             <div className="flex items-start gap-2">
               <FileText className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
               <div className="min-w-0">
@@ -271,8 +230,6 @@ export default function RestaurantLayout({
               </div>
             </div>
 
-            {/* Commission Rate */}
-            {/* Coordinates */}
             <div className="flex items-start gap-2">
               <MapPin className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
               <div className="min-w-0">
@@ -290,7 +247,6 @@ export default function RestaurantLayout({
             </div>
           </div>
         </div>
-
       </Card>
 
       {children}

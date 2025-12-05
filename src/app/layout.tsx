@@ -5,6 +5,9 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Rider Operations Dashboard",
   description: "Manage riders and daily operations with clarity.",
+  icons: {
+    icon: "/icons/Asset 34.svg",
+  },
 };
 
 export default function RootLayout({

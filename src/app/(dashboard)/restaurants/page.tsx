@@ -1,9 +1,5 @@
-import { RestaurantDashboard } from "@/features/restaurants";
+import { redirect } from "next/navigation";
 
 export default function RestaurantsPage() {
-  return (
-    <div className="flex flex-col gap-6">
-      <RestaurantDashboard />
-    </div>
-  );
+  redirect("/restaurants/dashboard");
 }

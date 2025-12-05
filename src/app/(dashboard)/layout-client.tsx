@@ -17,8 +17,7 @@ export function DashboardLayoutClient({
 
   const restaurantDashboardPath = useMemo(() => {
     if (user?.role !== UserRole.RestaurantAdmin) return null;
-    const targetId = user.restaurantId || user.id;
-    return targetId ? `/restaurants/${targetId}/dashboard` : null;
+    return "/restaurants/dashboard";
   }, [user]);
 
   useEffect(() => {

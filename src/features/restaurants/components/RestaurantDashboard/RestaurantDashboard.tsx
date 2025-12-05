@@ -12,9 +12,8 @@ export function RestaurantDashboard() {
 
   const restaurantDashboardPath = useMemo(() => {
     if (!isRestaurantAdmin) return null;
-    const targetId = restaurant?.id || user?.restaurantId || user?.id;
-    return targetId ? `/restaurants/${targetId}/dashboard` : null;
-  }, [isRestaurantAdmin, restaurant?.id, user?.id, user?.restaurantId]);
+    return "/restaurants/dashboard";
+  }, [isRestaurantAdmin]);
 
   useEffect(() => {
     if (restaurantDashboardPath && status === AuthStatus.Authenticated) {
