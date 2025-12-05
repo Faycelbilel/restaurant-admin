@@ -1,9 +1,11 @@
 "use client";
 
+import { useParams } from "next/navigation";
+import { RestaurantHistoryTab } from "./RestaurantHistoryTab";
+
 export default function RestaurantHistoryPage() {
-  return (
-    <div className="rounded-2xl border border-dashed border-gray-200 bg-white px-6 py-10 text-center text-gray-600 shadow-sm">
-      History section placeholder.
-    </div>
-  );
+  const params = useParams();
+  const restaurantId = params.id as string;
+
+  return <RestaurantHistoryTab restaurantId={restaurantId} />;
 }
