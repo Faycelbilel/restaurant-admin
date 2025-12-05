@@ -27,9 +27,14 @@ export function Sidebar({ isCollapsed, onToggle, navItems }: SidebarProps) {
             isCollapsed ? "items-center gap-1" : "gap-2 px-3"
           )}
         >
-                    {navItems.map(({ label, iconSrc, href }) => {
-            const isActive = pathname === href;
-            
+          {navItems.map(({ label, iconSrc, href }) => {
+            const normalizedPath = (pathname || "/").replace(/\/$/, "") || "/";
+            const normalizedHref = href.replace(/\/$/, "") || "/";
+            const isActive =
+              normalizedPath === normalizedHref ||
+              (normalizedHref !== "/restaurants" &&
+                normalizedPath.startsWith(`${normalizedHref}/`));
+
             return (
               <Link
                 key={label}
@@ -45,10 +50,10 @@ export function Sidebar({ isCollapsed, onToggle, navItems }: SidebarProps) {
                     : "text-gray-600 hover:bg-primary/10 hover:text-gray-800"
                 )}
               >
-                <Icon 
-                  src={iconSrc} 
-                  alt={label} 
-                  className="h-5 w-5" 
+                <Icon
+                  src={iconSrc}
+                  alt={label}
+                  className="h-5 w-5"
                   color={isActive ? "#FFFFFF" : "#17213A"}
                 />
                 <span
