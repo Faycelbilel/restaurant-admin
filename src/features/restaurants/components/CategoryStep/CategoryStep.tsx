@@ -11,7 +11,7 @@ import {
   TextWeight,
   TextColor,
 } from "@/shared/types/enums";
-import { AddCategoryModal } from "../AddCategoryModal";
+import { AddCategoryModal } from "../AddCategoryModal/AddCategoryModal";
 import { STEP_TITLES } from "../AddDishWizard/constants";
 import type { CategoryStepProps } from "./types";
 

@@ -15,19 +15,23 @@ export function DashboardLayoutClient({
   const router = useRouter();
   const pathname = usePathname();
 
-  const restaurantDashboardPath = useMemo(() => {
+  const restaurantRootPath = useMemo(() => {
     if (user?.role !== UserRole.RestaurantAdmin) return null;
-    return "/restaurants/dashboard";
+    return "/restaurants";
   }, [user]);
 
   useEffect(() => {
-    if (restaurantDashboardPath) {
-      const normalizedPath = pathname?.replace(/\/$/, "");
-      if (!normalizedPath?.startsWith(restaurantDashboardPath)) {
-        router.replace(restaurantDashboardPath);
-      }
+    if (!restaurantRootPath) return;
+    const normalizedPath = pathname?.replace(/\/$/, "");
+    const isRestaurantsPath =
+      normalizedPath === restaurantRootPath ||
+      normalizedPath?.startsWith(`${restaurantRootPath}/`);
+
+    // Only redirect if the user is a restaurant admin and is outside the restaurants area
+    if (!isRestaurantsPath) {
+      router.replace(restaurantRootPath);
     }
-  }, [restaurantDashboardPath, pathname, router]);
+  }, [restaurantRootPath, pathname, router]);
 
   return (
     <AuthGuard>

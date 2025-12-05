@@ -1,9 +1,7 @@
 "use client";
 
-
-
-import { useEffect, useMemo, useState } from "react";
-
+import Link from "next/link";
+import { useEffect, useMemo } from "react";
 import { usePathname, useRouter } from "next/navigation";
 
 import {
@@ -105,24 +103,28 @@ function RestaurantLayoutSkeleton({ activeTab }: { activeTab: string }) {
 
 
 export default function RestaurantLayout({
-
   children,
-
 }: {
-
   children: React.ReactNode;
-
 }) {
-
-  const [activeTab, setActiveTab] = useState("dashboard");
-
-
 
   const router = useRouter();
 
   const pathname = usePathname();
 
-  const { user, restaurant, status } = useAuth();
+  const { restaurant, status } = useAuth();
+
+  const activeTab = useMemo(() => {
+    const segments = pathname.split("/").filter(Boolean); // ["restaurants","menu",...]
+    if (segments[0] !== "restaurants") return "dashboard";
+
+    const tabSegment = segments[1] ?? "dashboard";
+    return ["dashboard", "history", "menu", "billing", "operating-hours"].includes(
+      tabSegment
+    )
+      ? tabSegment
+      : "dashboard";
+  }, [pathname]);
 
 
 
@@ -216,23 +218,7 @@ export default function RestaurantLayout({
 
   ] as const;
 
-
-
   const isOpen = !restaurant.manuallyClosed;
-
-  const tabComponents: Record<string, React.ReactNode> = {
-
-    dashboard: children,
-
-    history: <div>History</div>,
-
-    menu: <div>Menu</div>,
-
-    billing: <div>Billing</div>,
-
-    "operating-hours": <OperatingHours />,
-
-  };
 
 
 
@@ -245,45 +231,29 @@ export default function RestaurantLayout({
         <div className="flex flex-wrap items-center justify-center gap-3">
 
           {tabs.map((tab) => {
-
             const Icon = tab.icon;
-
             const isActive = activeTab === tab.id;
+            const href =
+              tab.id === "dashboard"
+                ? "/restaurants"
+                : `/restaurants/${tab.id}`;
 
             return (
-
-              <button
-
+              <Link
                 key={tab.id}
-
-                type="button"
-
-                onClick={() => setActiveTab(tab.id)}
-
+                href={href}
                 className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition ${
-
                   isActive
-
                     ? "bg-primary text-white shadow-sm"
-
                     : "text-gray-700 hover:bg-gray-100"
-
                 }`}
-
               >
-
                 <Icon
-
                   className={`h-4 w-4 ${isActive ? "text-white" : "text-gray-500"}`}
-
                 />
-
                 {tab.label}
-
-              </button>
-
+              </Link>
             );
-
           })}
 
         </div>
@@ -628,9 +598,7 @@ export default function RestaurantLayout({
 
       )}
 
-
-
-      {tabComponents[activeTab]}
+      {children}
 
     </div>
 

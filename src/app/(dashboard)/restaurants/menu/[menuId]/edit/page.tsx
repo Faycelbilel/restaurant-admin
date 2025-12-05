@@ -1,16 +1,19 @@
 "use client";
 
-import { useParams, useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import { AddDishWizard } from "@/features/restaurants/components/AddDishWizard";
 import { categoryApi, type MenuCategory } from "@/features/restaurants/services/categoryApi";
 import { menuApi, type CreateMenuItemRequest, type MenuItem } from "@/features/restaurants/services/menuApi";
 import type { DishFormData } from "@/features/restaurants/components/AddDishWizard/types";
+import { useAuth } from "@/shared/contexts";
 
 export default function EditMenuItemPage() {
   const params = useParams();
   const router = useRouter();
-  const restaurantId = params.id as string;
+  const { restaurant } = useAuth();
+  const restaurantId = restaurant?.id?.toString() || "";
+  const restaurantIdNumber = restaurantId ? parseInt(restaurantId, 10) : 0;
   const menuId = params.menuId as string;
   const [categories, setCategories] = useState<MenuCategory[]>([]);
   const [menuItem, setMenuItem] = useState<MenuItem | null>(null);
@@ -19,13 +22,16 @@ export default function EditMenuItemPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        if (!restaurantId) {
+          setIsLoading(false);
+          return;
+        }
         setIsLoading(true);
-        const restaurantIdNumber = parseInt(restaurantId, 10);
         const menuIdNumber = parseInt(menuId, 10);
 
         // Fetch categories and full menu list, then select the target item
         const [fetchedCategories, menuList] = await Promise.all([
-          categoryApi.getCategories(restaurantIdNumber),
+          categoryApi.getCategories(),
           menuApi.getMenuItems(),
         ]);
 
@@ -61,7 +67,8 @@ export default function EditMenuItemPage() {
   }, [restaurantId, menuId, router]);
 
   const handleCategoryAdd = async (data: { nameEn: string; nameFr: string; nameAr: string }): Promise<void> => {
-    const newCategory = await categoryApi.createCategory(parseInt(restaurantId), {
+    if (!restaurantIdNumber) return;
+    const newCategory = await categoryApi.createCategory({
       name: data.nameEn,
       nameEn: data.nameEn,
       nameFr: data.nameFr,
@@ -72,6 +79,7 @@ export default function EditMenuItemPage() {
 
   const handleSubmit = async (formData: DishFormData) => {
     try {
+      if (!restaurantIdNumber) return;
       // Map category names to category IDs
       const categoryIds = categories
         .filter((cat) => formData.categories.includes(cat.name))
@@ -101,20 +109,20 @@ export default function EditMenuItemPage() {
 
       // Update menu item with new images if provided
       await menuApi.updateMenuItem(
-        parseInt(restaurantId),
+        restaurantIdNumber,
         parseInt(menuId),
         menuData,
         formData.images || []
       );
 
       // Navigate back to menu page on success
-      router.push(`/restaurants/${restaurantId}/menu`);
+      router.push(`/restaurants/menu`);
     } catch (error) {
     }
   };
 
   const handleCancel = () => {
-    router.push(`/restaurants/${restaurantId}/menu`);
+    router.push(`/restaurants/menu`);
   };
 
   if (isLoading) {

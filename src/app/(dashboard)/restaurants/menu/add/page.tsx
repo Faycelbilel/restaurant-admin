@@ -1,16 +1,18 @@
 "use client";
 
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { AddDishWizard } from "@/features/restaurants/components/AddDishWizard";
 import { categoryApi, type MenuCategory } from "@/features/restaurants/services/categoryApi";
 import { menuApi, type CreateMenuItemRequest } from "@/features/restaurants/services/menuApi";
 import type { DishFormData } from "@/features/restaurants/components/AddDishWizard/types";
+import { useAuth } from "@/shared/contexts";
 
 export default function AddMenuItemPage() {
-  const params = useParams();
   const router = useRouter();
-  const restaurantId = params.id as string;
+  const { restaurant } = useAuth();
+  const restaurantId = restaurant?.id?.toString() || "";
+  const restaurantIdNumber = restaurantId ? parseInt(restaurantId, 10) : 0;
   const [categories, setCategories] = useState<MenuCategory[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -18,7 +20,7 @@ export default function AddMenuItemPage() {
     const fetchCategories = async () => {
       try {
         setIsLoading(true);
-        const fetchedCategories = await categoryApi.getCategories(parseInt(restaurantId));
+        const fetchedCategories = await categoryApi.getCategories();
         setCategories(fetchedCategories);
       } catch (error) {
         setCategories([]);
@@ -28,10 +30,10 @@ export default function AddMenuItemPage() {
     };
 
     fetchCategories();
-  }, [restaurantId]);
+  }, []);
 
   const handleCategoryAdd = async (data: { nameEn: string; nameFr: string; nameAr: string }): Promise<void> => {
-    const newCategory = await categoryApi.createCategory(parseInt(restaurantId), {
+    const newCategory = await categoryApi.createCategory({
       name: data.nameEn,
       nameEn: data.nameEn,
       nameFr: data.nameFr,
@@ -42,6 +44,7 @@ export default function AddMenuItemPage() {
 
   const handleSubmit = async (formData: DishFormData) => {
     try {
+      if (!restaurantIdNumber) return;
       // Map category names to category IDs
       const categoryIds = categories
         .filter((cat) => formData.categories.includes(cat.name))
@@ -63,7 +66,7 @@ export default function AddMenuItemPage() {
         promotionLabel: formData.promotionLabel,
         available: formData.available,
         popular: formData.popular,
-        restaurantId: parseInt(restaurantId),
+        restaurantId: restaurantIdNumber,
         categoryIds,
         optionGroups: formData.optionGroups,
         imageUrls: [], // Will be populated by backend after upload
@@ -71,19 +74,19 @@ export default function AddMenuItemPage() {
 
       // Create menu item with images
       await menuApi.createMenuItem(
-        parseInt(restaurantId),
+        restaurantIdNumber,
         menuData,
         formData.images || []
       );
 
       // Navigate back to menu page on success
-      router.push(`/restaurants/${restaurantId}/menu`);
+      router.push(`/restaurants/menu`);
     } catch (error) {
     }
   };
 
   const handleCancel = () => {
-    router.push(`/restaurants/${restaurantId}/menu`);
+    router.push(`/restaurants/menu`);
   };
 
   if (isLoading) {
@@ -101,7 +104,7 @@ export default function AddMenuItemPage() {
     <div className="space-y-6 p-6">
       <AddDishWizard
         categories={categories.map((cat) => cat.name)}
-        restaurantId={parseInt(restaurantId)}
+        restaurantId={restaurantIdNumber}
         onCategoryAdd={handleCategoryAdd}
         onSubmit={handleSubmit}
         onCancel={handleCancel}

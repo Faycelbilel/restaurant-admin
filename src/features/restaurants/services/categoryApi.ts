@@ -27,10 +27,8 @@ export const categoryApi = {
   /**
    * Get all categories for a restaurant
    */
-  async getCategories(restaurantId: number): Promise<MenuCategory[]> {
-    return fetchJsonWithAuth<MenuCategory[]>(
-      `/api/admin/restaurants/${restaurantId}/categories`
-    );
+  async getCategories(): Promise<MenuCategory[]> {
+    return fetchJsonWithAuth<MenuCategory[]>(`/api/restaurant/categories`);
   },
 
   /**
@@ -45,17 +43,11 @@ export const categoryApi = {
   /**
    * Create a new category
    */
-  async createCategory(
-    restaurantId: number,
-    data: CreateCategoryRequest
-  ): Promise<MenuCategory> {
-    return fetchJsonWithAuth<MenuCategory>(
-      `/api/admin/restaurants/${restaurantId}/categories`,
-      {
-        method: "POST",
-        body: JSON.stringify(data),
-      }
-    );
+  async createCategory(data: CreateCategoryRequest): Promise<MenuCategory> {
+    return fetchJsonWithAuth<MenuCategory>(`/api/restaurant/categories`, {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
   },
 
   /**

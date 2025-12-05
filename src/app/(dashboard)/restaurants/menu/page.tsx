@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { Plus, Loader2 } from "lucide-react";
 import { Button, Text } from "@/shared/atoms";
 import { ButtonVariant, ButtonSize, TextElement, TextWeight } from "@/shared/types/enums";
@@ -10,11 +10,12 @@ import { menuApi } from "@/features/restaurants/services/menuApi";
 import { Pagination } from "@/shared/molecules";
 import type { MenuItem } from "@/features/restaurants/services/menuApi";
 import { RestaurantMenuItem } from "@/features/restaurants/types/interfaces/RestaurantMenuItem";
+import { useAuth } from "@/shared/contexts";
 
 export default function RestaurantMenuPage() {
-  const params = useParams();
   const router = useRouter();
-  const restaurantId = params.id as string;
+  const { restaurant } = useAuth();
+  const restaurantId = restaurant?.id?.toString() || "";
   const PAGE_SIZE = 12;
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -74,11 +75,11 @@ export default function RestaurantMenuPage() {
   const displayItems = paginatedItems.map(mapToCardItem);
 
   const handleAddMenuItem = () => {
-    router.push(`/restaurants/${restaurantId}/menu/add`);
+    router.push("/restaurants/menu/add");
   };
 
   const handleEditMenuItem = (item: RestaurantMenuItem) => {
-    router.push(`/restaurants/${restaurantId}/menu/${item.id}/edit`);
+    router.push(`/restaurants/menu/${item.id}/edit`);
   };
 
   const handleDeleteMenuItem = async (item: RestaurantMenuItem) => {
