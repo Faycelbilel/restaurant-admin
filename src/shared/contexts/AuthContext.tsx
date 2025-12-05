@@ -190,7 +190,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         localStorage.removeItem("restaurant");
       }
 
-      router.push("/restaurants/dashboard");
+      router.push("/restaurants");
     } catch {}
   }, [router]);
 

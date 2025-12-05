@@ -1,0 +1,32 @@
+export interface BasicInfoStepProps {
+  name: string;
+  nameEn: string;
+  nameFr: string;
+  nameAr: string;
+  description: string;
+  descriptionEn: string;
+  descriptionFr: string;
+  descriptionAr: string;
+  price: string;
+  promotionPrice: string;
+  promotionActive: boolean;
+  promotionLabel: string;
+  available: boolean;
+  popular: boolean;
+  onNameChange: (value: string) => void;
+  onNameEnChange: (value: string) => void;
+  onNameFrChange: (value: string) => void;
+  onNameArChange: (value: string) => void;
+  onDescriptionChange: (value: string) => void;
+  onDescriptionEnChange: (value: string) => void;
+  onDescriptionFrChange: (value: string) => void;
+  onDescriptionArChange: (value: string) => void;
+  onPriceChange: (value: string) => void;
+  onPromotionPriceChange: (value: string) => void;
+  onPromotionActiveChange: (value: boolean) => void;
+  onPromotionLabelChange: (value: string) => void;
+  onAvailableChange: (value: boolean) => void;
+  onPopularChange: (value: boolean) => void;
+  onNext: () => void;
+  onBack: () => void;
+}

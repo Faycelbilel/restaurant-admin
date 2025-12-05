@@ -6,10 +6,7 @@ const backendBaseUrl =
 type RouteParams = { path?: string[] };
 type RouteContext = { params: RouteParams | Promise<RouteParams> };
 
-async function proxyAuth(
-  request: NextRequest,
-  paramsInput: RouteParams | Promise<RouteParams>
-) {
+async function proxyRequest(request: NextRequest, paramsInput: RouteParams | Promise<RouteParams>) {
   const resolvedParams = await Promise.resolve(paramsInput);
   const pathSegments = Array.isArray(resolvedParams?.path)
     ? resolvedParams.path
@@ -17,8 +14,9 @@ async function proxyAuth(
 
   const targetPath = pathSegments.join("/");
   const search = request.nextUrl.search || "";
-  const backendUrl = `${backendBaseUrl}/api/auth/${targetPath}${search}`;
+  const backendUrl = `${backendBaseUrl}/api/${targetPath}${search}`;
 
+  // Clone headers and drop forbidden ones
   const headers = new Headers(request.headers);
   headers.delete("host");
   headers.delete("content-length");
@@ -33,6 +31,7 @@ async function proxyAuth(
 
   if (isBodyAllowed) {
     requestInit.body = request.body;
+    // Required when sending a ReadableStream body with fetch in Node/Undici
     (requestInit as any).duplex = "half";
   }
 
@@ -45,7 +44,7 @@ async function proxyAuth(
     return NextResponse.json(
       {
         success: false,
-        message: "Auth upstream request failed",
+        message: "Upstream API request failed",
         details: error instanceof Error ? error.message : "Unknown error",
       },
       { status: 502 }
@@ -70,7 +69,7 @@ async function proxyAuth(
 const createHandler =
   (method: string) =>
   (request: NextRequest, context: RouteContext) =>
-    proxyAuth(request, context.params);
+    proxyRequest(request, context.params);
 
 export const GET = createHandler("GET");
 export const POST = createHandler("POST");
