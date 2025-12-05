@@ -1,6 +1,6 @@
 "use client";
 
-import OperatingHours from "@/app/(dashboard)/restaurants/RestaurantOperating/OperatingHours";
+import { OperatingHours } from "@/features/restaurants/components/OperatingHours";
 
 export default function OperatingHoursRoute() {
   return <OperatingHours />;

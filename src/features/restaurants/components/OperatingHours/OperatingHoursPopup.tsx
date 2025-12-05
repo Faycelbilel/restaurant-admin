@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { X, CalendarDays } from "lucide-react";
 import { WeeklyScheduleEntryDTO } from "./operating";
-import { OperatingHoursService } from "@/hooks/restaurantDetailsApi";
+import { operatingHoursService } from "./services/operatingHoursService";
 
 type DayKey = "mon" | "tue" | "wed" | "thu" | "fri" | "sat" | "sun";
 
@@ -162,7 +162,7 @@ export function OperatingHoursPopup({
     if (!visible) return;
     setLoading(true);
 
-    OperatingHoursService.getOperatingHours()
+    operatingHoursService.getOperatingHours()
       .then((data) => {
         setDays(mapApiToDays(data.weeklySchedule));
       })
@@ -209,7 +209,7 @@ export function OperatingHoursPopup({
       closesAt: days[key].closesAt ?? null,
     }));
 
-    await OperatingHoursService.updateWeeklySchedule(payload);
+    await operatingHoursService.updateWeeklySchedule(payload);
 
     setSaving(false);
     onClose();

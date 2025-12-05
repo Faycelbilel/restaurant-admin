@@ -1,15 +1,15 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { CalendarDays, CalendarIcon, Plus, Trash2 } from "lucide-react";
+import { CalendarDays, Plus, Trash2 } from "lucide-react";
+import Image from "next/image";
 import { SpecialDayData, SpecialDayModal } from "./SpecialDayPopup";
 import { SpecialDayCard } from "./SpecialDayCard";
 import { parseTimeString } from "./timeUtils";
 import { buildPayload } from "./specialDayUtils";
 import { OperatingHoursPopup } from "./OperatingHoursPopup";
 import { WeeklyScheduleEntryDTO } from "./operating";
-import Image from "next/image";
-import { OperatingHoursService } from "@/hooks/restaurantDetailsApi";
+import { operatingHoursService } from "./services/operatingHoursService";
 
 export default function OperatingHours() {
   const [weeklySchedule, setWeeklySchedule] = useState<
@@ -24,7 +24,7 @@ export default function OperatingHours() {
 
   const fetchSchedule = async () => {
     try {
-      const data = await OperatingHoursService.getOperatingHours();
+      const data = await operatingHoursService.getOperatingHours();
       setWeeklySchedule(data.weeklySchedule);
       setSpecialDays(data.specialDays);
     } catch (err) {
@@ -34,7 +34,7 @@ export default function OperatingHours() {
 
   const handleDeleteSpecialDay = async (id: number) => {
     try {
-      await OperatingHoursService.deleteSpecialDay(id);
+      await operatingHoursService.deleteSpecialDay(id);
       setSpecialDays((prev) => prev.filter((d) => d.id !== id));
     } catch (error) {
       console.log("Error deleting special day:", error);
@@ -87,7 +87,7 @@ export default function OperatingHours() {
       const payload = buildPayload(data, lastTimes);
 
       if (selectedSpecialDay) {
-        const updated = await OperatingHoursService.updateSpecialDay(
+        const updated = await operatingHoursService.updateSpecialDay(
           selectedSpecialDay.id,
           payload
         );
@@ -97,7 +97,7 @@ export default function OperatingHours() {
           )
         );
       } else {
-        const created = await OperatingHoursService.addSpecialDay(payload);
+        const created = await operatingHoursService.addSpecialDay(payload);
         setSpecialDays((prev) => [...prev, created]);
       }
 

@@ -1,11 +1,18 @@
 "use client";
 
-import { useParams } from "next/navigation";
-import { RestaurantHistoryTab } from "./RestaurantHistoryTab";
+import { useAuth } from "@/shared/contexts";
+import { RestaurantHistoryTab } from "@/features/restaurants/components/History/RestaurantHistoryTab/RestaurantHistoryTab";
 
 export default function RestaurantHistoryPage() {
-  const params = useParams();
-  const restaurantId = params.id as string;
+  const { restaurant } = useAuth();
 
-  return <RestaurantHistoryTab restaurantId={restaurantId} />;
+  if (!restaurant) {
+    return (
+      <div className="rounded-2xl border border-dashed border-gray-200 bg-white px-6 py-10 text-center text-gray-600 shadow-sm">
+        Restaurant data not available. Please login again.
+      </div>
+    );
+  }
+
+  return <RestaurantHistoryTab restaurantId={restaurant.id.toString()} />;
 }
