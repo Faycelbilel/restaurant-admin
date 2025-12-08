@@ -46,7 +46,6 @@ export const SpecialDayCard: React.FC<Props> = ({
 
   return (
     <div className="flex items-center justify-between bg-[#17213A] rounded-2xl px-4 py-3 mb-3">
-      {/* Left Side */}
       <div className="flex items-center flex-1">
         <Calendar size={22} className="text-gray-400 mr-3 flex-shrink-0" />
         <div className="max-w-[110px]">
@@ -59,7 +58,6 @@ export const SpecialDayCard: React.FC<Props> = ({
         </div>
       </div>
 
-      {/* Right Side */}
       <div className="flex items-center gap-2">
         <span className="text-white font-semibold text-xs tracking-wider pr-1">
           {isOpen && startTime && endTime

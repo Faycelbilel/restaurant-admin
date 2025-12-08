@@ -61,28 +61,29 @@ export const orderApi = {
    * Get restaurant orders with date range filtering
    * FIXED: Map backend → frontend structure
    */
- async getRestaurantOrders(
-  _restaurantId: number, // unused but kept for compatibility
+async getRestaurantOrders(
+  _restaurantId: number, 
   startDate?: string,
   endDate?: string,
   page: number = 1,
   pageSize: number = 20
 ): Promise<OrdersPagedResponse> {
   const searchParams = new URLSearchParams();
-  if (startDate) searchParams.append("startDate", startDate);
-  if (endDate) searchParams.append("endDate", endDate);
+  
+  // ✅ Backend expects 'from' and 'to', not 'startDate' and 'endDate'
+  if (startDate) searchParams.append("from", startDate);
+  if (endDate) searchParams.append("to", endDate);
   searchParams.append("page", page.toString());
   searchParams.append("pageSize", pageSize.toString());
 
   const query = searchParams.toString();
 
-  // Raw API response
   const api = await fetchJsonWithAuth<any>(
     `${ORDER_ENDPOINTS.GET_RESTAURANT_ORDERS}?${query}`
   );
 
   const totalPages = Math.ceil((api.totalItems ?? 0) / (api.pageSize ?? pageSize));
- const mappedItems: OrderApiResponse[] = (api.items || []).map((item: any) => ({
+  const mappedItems: OrderApiResponse[] = (api.items || []).map((item: any) => ({
     id: item.orderId,
     orderId: item.orderId,
     clientName: item.client?.name || "N/A",

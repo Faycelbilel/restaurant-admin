@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { X, CalendarDays } from "lucide-react";
 import { WeeklyScheduleEntryDTO } from "./operating";
 import { operatingHoursService } from "./services/operatingHoursService";
@@ -26,16 +26,27 @@ const DAYS: { key: DayKey; label: string }[] = [
 const SetHoursPopup = ({
   visible,
   day,
+  initialStartTime = "09:00",
+  initialEndTime = "17:00",
   onClose,
   onSave,
 }: {
   visible: boolean;
   day: string;
+  initialStartTime?: string;
+  initialEndTime?: string;
   onClose: () => void;
   onSave: (start: string, end: string) => void;
 }) => {
-  const [startTime, setStartTime] = useState("09:00");
-  const [endTime, setEndTime] = useState("17:00");
+  const [startTime, setStartTime] = useState(initialStartTime);
+  const [endTime, setEndTime] = useState(initialEndTime);
+
+  useEffect(() => {
+    if (visible) {
+      setStartTime(initialStartTime);
+      setEndTime(initialEndTime);
+    }
+  }, [visible, initialStartTime, initialEndTime]);
 
   if (!visible) return null;
 
@@ -123,7 +134,6 @@ export function OperatingHoursPopup({
     }));
   };
 
-  // Map API response to DayKey structure
   const mapApiToDays = (
     weekly: WeeklyScheduleEntryDTO[]
   ): Record<DayKey, DayState> => {
@@ -162,7 +172,8 @@ export function OperatingHoursPopup({
     if (!visible) return;
     setLoading(true);
 
-    operatingHoursService.getOperatingHours()
+    operatingHoursService
+      .getOperatingHours()
       .then((data) => {
         setDays(mapApiToDays(data.weeklySchedule));
       })
@@ -178,7 +189,6 @@ export function OperatingHoursPopup({
   };
 
   const handleSave = async () => {
-    // Check if any open day does not have opensAt or closesAt
     const invalidDay = DAYS.find(
       ({ key }) =>
         days[key].isOpen && (!days[key].opensAt || !days[key].closesAt)
@@ -186,12 +196,11 @@ export function OperatingHoursPopup({
 
     if (invalidDay) {
       alert(`Please set hours for ${invalidDay.label}`);
-      return; // Stop saving
+      return;
     }
 
     setSaving(true);
 
-    // Prepare payload
     const dayMap: Record<DayKey, WeeklyScheduleEntryDTO["day"]> = {
       mon: "MONDAY",
       tue: "TUESDAY",
@@ -301,6 +310,8 @@ export function OperatingHoursPopup({
       <SetHoursPopup
         visible={setHoursVisible}
         day={selectedDay.toUpperCase()}
+        initialStartTime={days[selectedDay].opensAt || "09:00"}
+        initialEndTime={days[selectedDay].closesAt || "17:00"}
         onClose={() => setSetHoursVisible(false)}
         onSave={handleSaveHours}
       />

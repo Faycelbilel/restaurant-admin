@@ -78,7 +78,6 @@ export const SetHoursPopup = ({
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
       <div className="bg-white rounded-xl w-[90%] max-w-[360px] p-6">
-        {/* HEADER */}
         <div className="flex items-center justify-between mb-3">
           <button
             onClick={onClose}
@@ -92,12 +91,10 @@ export const SetHoursPopup = ({
           <div className="w-7" />
         </div>
 
-        {/* DESCRIPTION */}
         <p className="text-gray-500 text-center text-sm mb-4">
           Set the start and end times for your working hours
         </p>
 
-        {/* TIME PICKERS */}
         <div className="flex flex-col items-center">
           <TimePicker
             hour={startHour}
@@ -128,7 +125,6 @@ export const SetHoursPopup = ({
           />
         </div>
 
-        {/* SAVE BUTTON */}
         <div className="mt-5 flex justify-center">
           <button
             onClick={handleSave}
@@ -155,7 +151,6 @@ const TimePicker = ({
   decrementMinute,
 }: any) => (
   <div className="flex items-center">
-    {/* HOUR */}
     <div className="flex flex-col items-center mx-2">
       <button onClick={() => setHour(incrementHour(hour))}>
         <ChevronUp size={20} />
@@ -173,7 +168,6 @@ const TimePicker = ({
 
     <span className="text-xl font-bold mx-2">:</span>
 
-    {/* MINUTE */}
     <div className="flex flex-col items-center mx-2">
       <button onClick={() => setMinute(incrementMinute(minute))}>
         <ChevronUp size={20} />
@@ -189,7 +183,6 @@ const TimePicker = ({
       </button>
     </div>
 
-    {/* PERIOD */}
     <div className="flex flex-col ml-3">
       <button
         onClick={() => setPeriod("AM")}

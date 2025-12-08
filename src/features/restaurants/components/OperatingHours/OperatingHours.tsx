@@ -131,7 +131,6 @@ export default function OperatingHours() {
         </p>
       </div>
 
-      {/* Weekly Schedule Card */}
       <div className="bg-white border border-gray-300 rounded-xl p-6 mb-6 shadow-sm">
         <h2 className="text-2xl font-semibold text-gray-800 mb-2">
           Weekly Schedule
@@ -147,7 +146,6 @@ export default function OperatingHours() {
         </button>
       </div>
 
-      {/* Special Days Card */}
       <div className="bg-white border border-gray-300 rounded-xl p-6 shadow-sm">
         <div className="flex justify-between items-center mb-3">
           <h2 className="text-2xl font-semibold text-gray-800">Special Days</h2>
@@ -206,7 +204,6 @@ export default function OperatingHours() {
         ))}
       </div>
 
-      {/* Popups */}
       <OperatingHoursPopup
         visible={showPopup}
         onClose={() => setShowPopup(false)}

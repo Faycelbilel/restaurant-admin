@@ -16,7 +16,6 @@ import type {
 } from "./types/api";
 import { restaurantApi } from "@/features/restaurants/services/restaurantApi";
 
-// --- Types ---
 export type TimeframeKey = "today" | "week" | "month";
 
 export const timeframePeriodMap: Record<TimeframeKey, AnalyticsPeriod> = {
@@ -40,7 +39,6 @@ export type TopDish = {
   percentage: number;
 };
 
-// --- Hook ---
 export function useAnalytics(initialTimeframe: TimeframeKey = "today") {
   const [timeframe, setTimeframe] = useState(initialTimeframe);
   const [overview, setOverview] = useState<AnalyticsOverviewResponse | null>(
@@ -109,7 +107,6 @@ export function useAnalytics(initialTimeframe: TimeframeKey = "today") {
   };
 }
 
-// --- Helpers ---
 function formatNumber(value: number, fractionDigits = 0): string {
   if (!Number.isFinite(value)) return "0";
   const fixedValue =

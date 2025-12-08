@@ -1,4 +1,3 @@
-// RestaurantHistoryTab.tsx
 "use client";
 
 import { useState, useEffect } from "react";
@@ -10,13 +9,24 @@ import { HistoryTable } from "./HistoryTable";
 import { orderApi } from "../services";
 import type { OrderApiResponse } from "../services/api.types";
 
+function formatLocalISO(d: Date) {
+  // Backend expects format: 2025-10-10 (date only)
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(
+    d.getDate()
+  ).padStart(2, "0")}`;
+}
+
 export function RestaurantHistoryTab({
   restaurantId,
 }: RestaurantHistoryTabProps) {
   const now = new Date();
-  const [dateRange, setDateRange] = useState<DateRange>({
-    startDate: new Date(now.getFullYear(), now.getMonth(), 1),
-    endDate: new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59),
+
+  const [dateRange, setDateRange] = useState<{
+    start: Date;
+    end: Date;
+  }>({
+    start: new Date(now.getFullYear(), now.getMonth(), 1),
+    end: new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999),
   });
 
   const [orders, setOrders] = useState<OrderApiResponse[]>([]);
@@ -27,22 +37,20 @@ export function RestaurantHistoryTab({
 
   useEffect(() => {
     const fetchOrders = async () => {
+      if (!restaurantId) return;
+
+      const startStr = formatLocalISO(dateRange.start);
+      const endStr = formatLocalISO(dateRange.end);
+
+      console.log("📌 SENT START →", startStr);
+      console.log("📌 SENT END   →", endStr);
+      console.log("📌 PAGE / SIZE →", currentPage, pageSize);
+
       try {
-        if (!restaurantId) return;
-
-        const startDate = new Date(dateRange.startDate);
-        startDate.setHours(0, 0, 0, 0);
-
-        const endDate = new Date(dateRange.endDate);
-        endDate.setHours(23, 59, 59, 999);
-
-        const startDateStr = startDate.toISOString().slice(0, 19);
-        const endDateStr = endDate.toISOString().slice(0, 19);
-
         const response = await orderApi.getRestaurantOrders(
           parseInt(restaurantId),
-          startDateStr,
-          endDateStr,
+          startStr,
+          endStr,
           currentPage - 1,
           pageSize
         );
@@ -51,7 +59,7 @@ export function RestaurantHistoryTab({
         setTotalPages(response?.totalPages ?? 1);
         setTotalElements(response?.totalElements ?? 0);
       } catch (error) {
-        console.error("Failed to fetch orders:", error);
+        console.error("❌ Failed to fetch orders:", error);
         setOrders([]);
         setTotalPages(1);
         setTotalElements(0);
@@ -59,35 +67,56 @@ export function RestaurantHistoryTab({
     };
 
     fetchOrders();
-  }, [restaurantId, dateRange, currentPage, pageSize]);
-
-  const pagination = {
+  }, [
+    restaurantId,
+    dateRange.start.getTime(),
+    dateRange.end.getTime(),
     currentPage,
     pageSize,
-    totalPages,
-    totalItems: totalElements,
-    onPageChange: (page: number) => setCurrentPage(page),
-    onPageSizeChange: (size: number) => {
-      setPageSize(size);
-      setCurrentPage(1);
-    },
+  ]);
+
+  const handleDateRangeChange = (range: DateRange) => {
+    console.log("📅 PICKER:", range);
+
+    const start = new Date(range.startDate);
+    start.setHours(0, 0, 0, 0);
+
+    const end = new Date(range.endDate);
+    end.setHours(23, 59, 59, 999);
+
+    setDateRange({
+      start,
+      end,
+    });
+
+    setCurrentPage(1);
   };
 
   return (
     <div className="space-y-6">
       <SectionHeader
         title="Orders By Time"
-        description={`Monitor orders completed, in progress, and pending. Total: ${totalElements} orders`}
+        description={`Monitor orders. Total: ${totalElements} orders`}
         action={
           <RangeDatePicker
-            startDate={dateRange.startDate}
-            endDate={dateRange.endDate}
-            onSelectRange={setDateRange}
+            startDate={dateRange.start}
+            endDate={dateRange.end}
+            onSelectRange={handleDateRangeChange}
           />
         }
       />
 
-      <HistoryTable orders={orders || []} pagination={pagination} />
+      <HistoryTable
+        orders={orders}
+        pagination={{
+          currentPage,
+          pageSize,
+          totalPages,
+          totalItems: totalElements,
+          onPageChange: setCurrentPage,
+          onPageSizeChange: setPageSize,
+        }}
+      />
     </div>
   );
 }
