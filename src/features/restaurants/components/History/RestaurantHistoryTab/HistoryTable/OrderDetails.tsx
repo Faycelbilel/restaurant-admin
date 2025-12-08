@@ -1,4 +1,3 @@
-// components/OrderModal.tsx
 import React from "react";
 import { MenuItem, OrderApiResponse } from "../../services/api.types";
 
@@ -45,15 +44,12 @@ export function OrderModal({ order, open, onClose }: OrderModalProps) {
 
   return (
     <div className="fixed top-0 left-0 right-0 bottom-0 z-[9999] flex items-center justify-center p-4">
-      {/* Full screen overlay with opacity */}
       <div
         className="fixed top-0 left-0 right-0 bottom-0 bg-black/50"
         onClick={onClose}
       />
 
-      {/* Modal content */}
       <div className="relative z-10 w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-white rounded-lg shadow-xl">
-        {/* Header */}
         <div className="sticky top-0 z-20 flex items-center justify-between p-4 bg-white border-b">
           <h2 className="text-xl font-bold">
             Order #{order.orderId || order.id || "N/A"}
@@ -66,9 +62,7 @@ export function OrderModal({ order, open, onClose }: OrderModalProps) {
           </button>
         </div>
 
-        {/* Body */}
         <div className="p-6 space-y-6">
-          {/* Restaurant Info */}
           <div className="flex items-start gap-4">
             {restaurantIcon ? (
               <img
@@ -89,7 +83,6 @@ export function OrderModal({ order, open, onClose }: OrderModalProps) {
             </div>
           </div>
 
-          {/* Order Details */}
           <div className="space-y-2 text-sm">
             <p>
               <span className="font-medium">Client:</span> {clientName}
@@ -121,7 +114,6 @@ export function OrderModal({ order, open, onClose }: OrderModalProps) {
             </p>
           </div>
 
-          {/* Order Items */}
           <div>
             <h4 className="font-semibold mb-3">Order Items</h4>
             {menuItems.length > 0 ? (
@@ -161,7 +153,6 @@ export function OrderModal({ order, open, onClose }: OrderModalProps) {
             )}
           </div>
 
-          {/* Payment Summary */}
           {order.payment && (
             <div className="border-t pt-4 space-y-2">
               <div className="flex justify-between text-sm">

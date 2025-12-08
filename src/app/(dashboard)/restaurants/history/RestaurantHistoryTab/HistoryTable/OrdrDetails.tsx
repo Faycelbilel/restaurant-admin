@@ -12,7 +12,6 @@ export function OrderModal({ order, open, onClose }: OrderModalProps) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
       <div className="bg-white rounded-2xl shadow-lg w-full max-w-2xl p-6 relative">
-        {/* Close button */}
         <button
           onClick={onClose}
           className="absolute top-3 right-3 text-gray-500 hover:text-gray-800 font-bold"
@@ -20,10 +19,8 @@ export function OrderModal({ order, open, onClose }: OrderModalProps) {
           ✕
         </button>
 
-        {/* Title */}
         <h2 className="text-xl font-bold mb-4">Order #{order.id}</h2>
 
-        {/* Restaurant Info */}
         <div className="flex items-center gap-4 mb-4">
           {order.restaurantIcon && (
             <img
@@ -39,7 +36,6 @@ export function OrderModal({ order, open, onClose }: OrderModalProps) {
           </div>
         </div>
 
-        {/* Order Info */}
         <div className="mb-4 space-y-1">
           <p>
             <strong>Client:</strong> {order.clientName}
@@ -77,7 +73,6 @@ export function OrderModal({ order, open, onClose }: OrderModalProps) {
           </ul>
         </div>
 
-        {/* Payment Summary */}
         {order.payment && (
           <div className="mt-4 border-t pt-4 space-y-1">
             <p>

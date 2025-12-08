@@ -1,5 +1,7 @@
 // types/order.types.ts (or wherever you keep your types)
 export interface MenuItem {
+  items: never[];
+  deliveryAddress: string | undefined;
   menuItemId: number;
   menuItemName: string;
   quantity: number;

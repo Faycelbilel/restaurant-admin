@@ -4,7 +4,6 @@ import React, { useEffect, useState } from "react";
 import { X, ChevronUp, ChevronDown } from "lucide-react";
 import { parseTimeString, TimeState, toTimeString } from "./timeUtils";
 import { buildPayload } from "./specialDayUtils";
-import { useAlerts } from "@/features/alerts";
 
 export interface SpecialDayData {
   name: string;
@@ -136,7 +135,6 @@ export const SpecialDayModal: React.FC<SpecialDayModalProps> = ({
       <div
         className={`flex items-center gap-3 ${disabled ? "opacity-50" : ""}`}
       >
-        {/* Hours */}
         <div className="flex flex-col items-center">
           <button onClick={incrementHour} disabled={disabled} className="p-1">
             <ChevronUp size={20} />
@@ -158,7 +156,6 @@ export const SpecialDayModal: React.FC<SpecialDayModalProps> = ({
 
         <span className="text-2xl font-bold">:</span>
 
-        {/* Minutes */}
         <div className="flex flex-col items-center">
           <button onClick={incrementMinute} disabled={disabled} className="p-1">
             <ChevronUp size={20} />
@@ -178,7 +175,6 @@ export const SpecialDayModal: React.FC<SpecialDayModalProps> = ({
           </button>
         </div>
 
-        {/* AM/PM */}
         <div className="flex flex-col gap-1 ml-2">
           {["AM", "PM"].map((p) => (
             <button
@@ -245,7 +241,6 @@ export const SpecialDayModal: React.FC<SpecialDayModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
       <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl overflow-hidden">
-        {/* Header */}
         <div className="flex items-center justify-between p-5 border-b">
           <button
             onClick={closeAndReset}
@@ -259,9 +254,7 @@ export const SpecialDayModal: React.FC<SpecialDayModalProps> = ({
           <div className="w-10" />
         </div>
 
-        {/* Body */}
         <div className="p-6 space-y-5">
-          {/* Name + Switch */}
           <div>
             <label className="block text-sm font-semibold text-gray-800 mb-2">
               Name
@@ -293,7 +286,6 @@ export const SpecialDayModal: React.FC<SpecialDayModalProps> = ({
             </div>
           </div>
 
-          {/* Date */}
           <div>
             <label className="block text-sm font-semibold text-gray-800 mb-2">
               Date
@@ -331,24 +323,19 @@ export const SpecialDayModal: React.FC<SpecialDayModalProps> = ({
             </div>
           </div>
 
-          {/* Time */}
-          {/* Time */}
           <div>
             <label className="block text-sm font-semibold text-gray-800 mb-3">
               Time
             </label>
             <div className="border border-gray-300 rounded-2xl p-5 bg-gray-50 flex flex-col items-center gap-4">
-              {/* Opens At */}
               <TimePicker
                 time={opensAt}
                 onChange={setOpensAt}
                 disabled={!isOpen_}
               />
 
-              {/* "to" text */}
               <span className="text-lg font-semibold text-gray-600">to</span>
 
-              {/* Closes At */}
               <TimePicker
                 time={closesAt}
                 onChange={setClosesAt}
@@ -358,7 +345,6 @@ export const SpecialDayModal: React.FC<SpecialDayModalProps> = ({
           </div>
         </div>
 
-        {/* Save Button */}
         <div className="p-6 pt-0">
           <button
             onClick={handleSave}

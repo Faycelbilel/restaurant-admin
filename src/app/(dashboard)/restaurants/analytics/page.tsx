@@ -21,7 +21,7 @@ export default function AnalyticsPage() {
 
   const linePath = useMemo(() => {
     if (salesValues.length === 0) return "";
-    const width = 1000; // Always full component width
+    const width = 1000; 
     const height = 240;
     const max = Math.max(...salesValues);
     const min = Math.min(...salesValues);
