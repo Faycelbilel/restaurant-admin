@@ -49,9 +49,17 @@ export const authApi = {
    * Removes refresh token cookie from backend
    */
   logout: async (): Promise<void> => {
+    const accessToken =
+      globalThis.window !== undefined
+        ? localStorage.getItem("accessToken")
+        : null;
+
     try {
-      const response = await fetch("/api/auth/logout", {
+      const response = await fetch("/api/auth/restaurant/logout", {
         method: "POST",
+        headers: {
+          ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+        },
         credentials: "include",
       });
 
