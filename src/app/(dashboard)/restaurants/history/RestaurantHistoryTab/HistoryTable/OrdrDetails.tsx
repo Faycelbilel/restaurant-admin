@@ -61,15 +61,15 @@ export function OrderModal({ order, open, onClose }: OrderModalProps) {
           </p>
         </div>
 
-        {/* Items */}
         <div className="mb-4">
           <p className="font-semibold mb-2">Items:</p>
           <ul className="space-y-1">
-            {order.items.map((item) => (
+            {(order.items ?? []).map((item) => (
               <li key={item.menuItemId} className="flex justify-between">
                 <span>
                   {item.menuItemName} x{item.quantity}
                   {item.extras.length > 0 && ` (+${item.extras.join(", ")})`}
+                  {item.specialInstructions && ` - ${item.specialInstructions}`}
                 </span>
                 <span>{item.lineTotal.toFixed(2)} TND</span>
               </li>

@@ -82,12 +82,11 @@ export const orderApi = {
   );
 
   const totalPages = Math.ceil((api.totalItems ?? 0) / (api.pageSize ?? pageSize));
-
-  // Map backend → frontend structure
-  const mappedItems: OrderApiResponse[] = (api.items || []).map((item: { orderId: any; client: { name: any; }; delivery: { driver: { name: any; }; estimatedReadyAt: string | number | Date; }; payment: { total: any; commission: any; }; date: string | number | Date; status: any; restaurant: { id: any; name: any; }; }) => ({
+ const mappedItems: OrderApiResponse[] = (api.items || []).map((item: any) => ({
     id: item.orderId,
+    orderId: item.orderId,
     clientName: item.client?.name || "N/A",
-    riderName: item.delivery?.driver?.name || "N/A",
+    riderName: item.delivery?.driver?.name || null,
     amount: item.payment?.total ?? 0,
     orderDate: item.date,
     status: item.status,
@@ -96,7 +95,13 @@ export const orderApi = {
       : undefined,
     restaurantId: item.restaurant?.id ?? 0,
     restaurantName: item.restaurant?.name ?? "",
-    commission: item.payment?.commission ?? 0, // optional, if your API provides it
+    restaurantImage: item.restaurant?.imageUrl || null,
+    restaurantIcon: item.restaurant?.iconUrl || null,
+    items: item.items || [],
+    deliveryAddress: item.delivery?.address || item.savedAddress?.formattedAddress || "—",
+    savedAddress: item.savedAddress,
+    delivery: item.delivery,
+    payment: item.payment,
   }));
 
   return {

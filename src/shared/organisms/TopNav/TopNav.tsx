@@ -6,7 +6,12 @@ import Link from "next/link";
 import { Home, ChevronRight, Bell, LogOut } from "lucide-react";
 import { Avatar, Button, Text } from "@/shared/atoms";
 import { ROUTE_LABELS } from "@/shared/configs";
-import { AvatarSize, ButtonType, ButtonVariant, TextElement } from "@/shared/types/enums";
+import {
+  AvatarSize,
+  ButtonType,
+  ButtonVariant,
+  TextElement,
+} from "@/shared/types/enums";
 import { useAuth } from "@/shared/contexts";
 
 export function TopNav() {
@@ -25,7 +30,9 @@ export function TopNav() {
               className="flex items-center gap-2 hover:text-primary transition-colors"
             >
               <Home className="h-4 w-4" />
-              <Text as={TextElement.Span} className="hidden sm:inline">Home</Text>
+              <Text as={TextElement.Span} className="hidden sm:inline">
+                Home
+              </Text>
             </Link>
           </li>
           {pathname !== "/" && pathname !== "/home" && (
@@ -46,11 +53,13 @@ export function TopNav() {
           className="relative h-11 w-11 rounded-full border border-gray-200 p-0 text-gray-500 hover:text-primary hover:bg-transparent"
         >
           <Bell className="h-5 w-5" />
-          <Text 
+          <Text
             as={TextElement.Span}
             className="absolute right-2 top-2 h-2 w-2 rounded-full bg-primary"
           />
-          <Text as={TextElement.Span} className="sr-only">Notifications</Text>
+          <Text as={TextElement.Span} className="sr-only">
+            Notifications
+          </Text>
         </Button>
 
         <div className="relative">
@@ -59,9 +68,9 @@ export function TopNav() {
             onClick={() => setShowUserMenu((prev) => !prev)}
             className="flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-full"
           >
-            <Avatar 
-              initials={user?.name?.substring(0, 2).toUpperCase() || "SA"} 
-              size={AvatarSize.Medium} 
+            <Avatar
+              initials={user?.name?.substring(0, 2).toUpperCase() || "SA"}
+              size={AvatarSize.Medium}
             />
           </button>
 

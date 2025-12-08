@@ -37,11 +37,32 @@ export function DashboardLayoutClient({
 
   const navItems: NavItem[] = useMemo(
     () => [
-      { label: "Dashboard", iconSrc: "/icons/dashboard.svg", href: "/restaurants" },
-      { label: "History", iconSrc: "/icons/history.svg", href: "/restaurants/history" },
+      {
+        label: "Dashboard",
+        iconSrc: "/icons/dashboard.svg",
+        href: "/restaurants",
+      },
+      {
+        label: "History",
+        iconSrc: "/icons/history.svg",
+        href: "/restaurants/history",
+      },
       { label: "Menu", iconSrc: "/icons/menu.svg", href: "/restaurants/menu" },
-      { label: "Billing", iconSrc: "/icons/billing.svg", href: "/restaurants/billing" },
-      { label: "Operating Hours", iconSrc: "/icons/clock.svg", href: "/restaurants/operating-hours" },
+      {
+        label: "Billing",
+        iconSrc: "/icons/billing.svg",
+        href: "/restaurants/billing",
+      },
+      {
+        label: "Operating Hours",
+        iconSrc: "/icons/clock.svg",
+        href: "/restaurants/operating-hours",
+      },
+      {
+        label: "Analytics",
+        iconSrc: "/icons/analytics.svg",
+        href: "/restaurants/analytics",
+      },
     ],
     []
   );

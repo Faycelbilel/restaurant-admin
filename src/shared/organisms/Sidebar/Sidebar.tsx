@@ -71,7 +71,7 @@ export function Sidebar({ isCollapsed, onToggle, navItems }: SidebarProps) {
             );
           })}
         </div>
-        <div className="mt-8 flex justify-center absolute right-[-20px] top-[40%]">
+        <div className="mt-8 flex justify-center absolute right-[-20px] top-[50%]">
           <Button
             type={ButtonType.Button}
             onClick={onToggle}
