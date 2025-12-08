@@ -33,9 +33,12 @@ export const authApi = {
 
     const data: AuthResponse = await response.json();
 
-    // Store access token in localStorage
+    // Store tokens in localStorage
     if (globalThis.window !== undefined) {
       localStorage.setItem("accessToken", data.accessToken);
+      if (data.refreshToken) {
+        localStorage.setItem("refreshToken", data.refreshToken);
+      }
     }
 
     return data;
@@ -58,6 +61,7 @@ export const authApi = {
       // Always clear local storage
       if (globalThis.window !== undefined) {
         localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
       }
     }
   },
@@ -67,9 +71,20 @@ export const authApi = {
    * RefreshToken cookie is automatically sent by the browser
    */
   refresh: async (): Promise<string> => {
+    const refreshToken =
+      globalThis.window !== undefined
+        ? localStorage.getItem("refreshToken")
+        : null;
+
     const response = await fetch("/api/auth/refresh", {
       method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
       credentials: "include", // Cookie sent automatically
+      body: JSON.stringify(
+        refreshToken ? { refreshToken } : {}
+      ),
     });
 
     if (!response.ok) {
@@ -79,9 +94,12 @@ export const authApi = {
 
     const data: AuthResponse = await response.json();
 
-    // Update access token in localStorage
+    // Update tokens in localStorage
     if (globalThis.window !== undefined) {
       localStorage.setItem("accessToken", data.accessToken);
+      if (data.refreshToken) {
+        localStorage.setItem("refreshToken", data.refreshToken);
+      }
     }
 
     return data.accessToken;

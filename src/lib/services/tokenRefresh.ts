@@ -21,6 +21,7 @@ export async function refreshAccessToken(): Promise<string> {
       // Clear tokens and redirect to login on refresh failure
       if (globalThis.window !== undefined) {
         localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
         globalThis.window.location.href = "/login";
       }
       throw error;

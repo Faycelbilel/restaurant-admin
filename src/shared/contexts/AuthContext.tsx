@@ -147,9 +147,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
             localStorage.removeItem("user");
             localStorage.removeItem("accessToken");
             localStorage.removeItem("restaurant");
+            localStorage.removeItem("refreshToken");
             setStatus(AuthStatus.Unauthenticated);
           }
         } else {
+          localStorage.removeItem("refreshToken");
           setStatus(AuthStatus.Unauthenticated);
         }
       }
