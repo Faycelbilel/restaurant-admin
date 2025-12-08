@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { AuthGuard, TopNav, Sidebar } from "@/shared/organisms";
 import { useAuth } from "@/shared/contexts";
@@ -16,6 +16,7 @@ export function DashboardLayoutClient({
   const router = useRouter();
   const pathname = usePathname();
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
   const restaurantRootPath = useMemo(() => {
     if (user?.role !== UserRole.RestaurantAdmin) return null;
@@ -67,25 +68,32 @@ export function DashboardLayoutClient({
     []
   );
 
-  return (
+   return (
     <AuthGuard>
-      <div className="flex h-screen bg-gradient-to-b from-white via-white to-gray-50 text-gray-800">
+      <div className="flex h-screen text-gray-800">
         <Sidebar
           isCollapsed={isSidebarCollapsed}
           onToggle={() => setIsSidebarCollapsed((prev) => !prev)}
           navItems={navItems}
+          isMobileOpen={isMobileSidebarOpen}
+          onCloseMobile={() => setIsMobileSidebarOpen(false)}
         />
-        <div className="flex flex-1 flex-col">
-          <header className="sticky top-0 z-20 border-b border-gray-100 bg-white/90 backdrop-blur">
-            <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-              <TopNav />
-            </div>
+        {isMobileSidebarOpen && (
+          <button
+            type="button"
+            className="fixed inset-0 z-30 bg-black/30 backdrop-blur-[1px] transition-opacity md:hidden"
+            onClick={() => setIsMobileSidebarOpen(false)}
+            aria-label="Close sidebar overlay"
+          />
+        )}
+
+        <div className="flex flex-1 flex-col overflow-hidden bg-gray-50">
+          <header className="sticky top-0 z-10 bg-white shadow flex-shrink-0">
+            <TopNav onMenuClick={() => setIsMobileSidebarOpen(true)} />
           </header>
 
-          <main className="flex-1 overflow-y-auto">
-            <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:px-8">
-              {children}
-            </div>
+          <main className="flex-1 overflow-y-auto bg-white p-4 sm:p-6 lg:px-10 lg:py-8">
+            {children}
           </main>
         </div>
       </div>
