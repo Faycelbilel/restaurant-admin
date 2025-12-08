@@ -93,13 +93,7 @@ export const columns: ColumnDef<OrderApiResponse>[] = [
       return <Badge variant={meta.variant as BadgeVariant}>{meta.label}</Badge>;
     },
   },
-  {
-    key: "prepTime",
-    header: "Prep Time",
-    width: "1fr",
-    render: (order) =>
-      (order as any).prepTime ?? <span className="text-gray-400">—</span>,
-  },
+
   {
     key: "totalAmount",
     header: "Total Amount",

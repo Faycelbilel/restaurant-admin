@@ -1,9 +1,11 @@
+"use client";
+
 import { useState } from "react";
 import { DataTable } from "@/shared/organisms";
 import { DataTableRenderMode } from "@/shared/types/enums";
 import { columns } from "./constants";
 import type { OrderApiResponse } from "../../services/api.types";
-import { OrderModal } from "./OrdrDetails";
+import { OrderModal } from "./OrderDetails";
 
 interface HistoryTableProps {
   orders: OrderApiResponse[];
@@ -21,7 +23,6 @@ interface HistoryTableProps {
 export function HistoryTable({
   orders,
   pagination,
-  loading = false,
 }: Readonly<HistoryTableProps>) {
   const [selectedOrder, setSelectedOrder] = useState<OrderApiResponse | null>(
     null
@@ -42,20 +43,16 @@ export function HistoryTable({
     <>
       <DataTable<OrderApiResponse>
         columns={columns}
-        data={orders}
-        getRowKey={(order) =>
-          order?.id ? order.id.toString() : crypto.randomUUID()
-        }
+        data={orders || []}
+        getRowKey={(order) => order?.id?.toString() ?? crypto.randomUUID()}
         renderMode={DataTableRenderMode.Grid}
         gridTemplateColumns="1.1fr 1.4fr 1.4fr 1.2fr 1fr 1fr 1fr 1fr"
         externalPagination={pagination}
         pageSizeOptions={[10, 20, 50, 100]}
         alwaysShowPagination
-        // ✅ Correct prop name
         onRowClick={(order) => openModal(order)}
       />
 
-      {/* Order details modal */}
       <OrderModal
         order={selectedOrder}
         open={isModalOpen}

@@ -53,9 +53,14 @@ export default function RestaurantLayout({
     const segments = pathname.split("/").filter(Boolean); // ["restaurants", "menu", ...]
     if (segments[0] !== "restaurants") return "dashboard";
     const tabSegment = segments[1] ?? "dashboard";
-    return ["dashboard", "history", "menu", "billing", "operating-hours"].includes(
-      tabSegment
-    )
+    return [
+      "dashboard",
+      "history",
+      "menu",
+      "billing",
+      "operating-hours",
+      "analytics",
+    ].includes(tabSegment)
       ? tabSegment
       : "dashboard";
   }, [pathname]);
@@ -244,7 +249,8 @@ export default function RestaurantLayout({
                       weight={TextWeight.Medium}
                       className="font-mono truncate"
                     >
-                      {restaurant.latitude.toFixed(4)}, {restaurant.longitude.toFixed(4)}
+                      {restaurant.latitude.toFixed(4)},{" "}
+                      {restaurant.longitude.toFixed(4)}
                     </Text>
                   ) : (
                     <Text

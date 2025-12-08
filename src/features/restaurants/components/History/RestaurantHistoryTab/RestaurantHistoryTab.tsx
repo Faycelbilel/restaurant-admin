@@ -1,3 +1,4 @@
+// RestaurantHistoryTab.tsx
 "use client";
 
 import { useState, useEffect } from "react";
@@ -7,7 +8,7 @@ import type { DateRange } from "@/shared/atoms/RangeDatePicker/types";
 import type { RestaurantHistoryTabProps } from "./types";
 import { HistoryTable } from "./HistoryTable";
 import { orderApi } from "../services";
-import { OrderApiResponse } from "../services/api.types";
+import type { OrderApiResponse } from "../services/api.types";
 
 export function RestaurantHistoryTab({
   restaurantId,
@@ -17,6 +18,7 @@ export function RestaurantHistoryTab({
     startDate: new Date(now.getFullYear(), now.getMonth(), 1),
     endDate: new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59),
   });
+
   const [orders, setOrders] = useState<OrderApiResponse[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
@@ -26,6 +28,8 @@ export function RestaurantHistoryTab({
   useEffect(() => {
     const fetchOrders = async () => {
       try {
+        if (!restaurantId) return;
+
         const startDate = new Date(dateRange.startDate);
         startDate.setHours(0, 0, 0, 0);
 
@@ -39,15 +43,18 @@ export function RestaurantHistoryTab({
           parseInt(restaurantId),
           startDateStr,
           endDateStr,
-          currentPage - 1, // API is 0-based
+          currentPage - 1,
           pageSize
         );
 
-        setOrders(response.content);
-        setTotalPages(response.totalPages);
-        setTotalElements(response.totalElements);
+        setOrders(response?.content ?? []);
+        setTotalPages(response?.totalPages ?? 1);
+        setTotalElements(response?.totalElements ?? 0);
       } catch (error) {
+        console.error("Failed to fetch orders:", error);
         setOrders([]);
+        setTotalPages(1);
+        setTotalElements(0);
       }
     };
 
@@ -58,7 +65,7 @@ export function RestaurantHistoryTab({
     currentPage,
     pageSize,
     totalPages,
-    totalItems: totalElements, // needed by HistoryTable
+    totalItems: totalElements,
     onPageChange: (page: number) => setCurrentPage(page),
     onPageSizeChange: (size: number) => {
       setPageSize(size);
@@ -80,7 +87,7 @@ export function RestaurantHistoryTab({
         }
       />
 
-      <HistoryTable orders={orders} pagination={pagination} />
+      <HistoryTable orders={orders || []} pagination={pagination} />
     </div>
   );
 }
