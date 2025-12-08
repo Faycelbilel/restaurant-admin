@@ -187,6 +187,34 @@ export const menuApi = {
   },
 
   /**
+   * Update availability status for a menu item
+   */
+  async updateMenuAvailability(
+    menuId: number,
+    available: boolean
+  ): Promise<MenuItem> {
+    const response = await fetchWithAuth(
+      `/api/restaurant/menu/${menuId}/availability`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ available }),
+      }
+    );
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({
+        message: "Failed to update menu item availability",
+      }));
+      throw new Error(error.message || `HTTP ${response.status}`);
+    }
+
+    return response.json();
+  },
+
+  /**
    * Delete a menu item for the authenticated restaurant
    */
   async deleteMenuItem(menuId: number): Promise<void> {

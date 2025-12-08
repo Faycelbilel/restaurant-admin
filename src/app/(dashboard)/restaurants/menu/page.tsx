@@ -10,12 +10,9 @@ import { menuApi } from "@/features/restaurants/services/menuApi";
 import { Pagination } from "@/shared/molecules";
 import type { MenuItem } from "@/features/restaurants/services/menuApi";
 import { RestaurantMenuItem } from "@/features/restaurants/types/interfaces/RestaurantMenuItem";
-import { useAuth } from "@/shared/contexts";
 
 export default function RestaurantMenuPage() {
   const router = useRouter();
-  const { restaurant } = useAuth();
-  const restaurantId = restaurant?.id?.toString() || "";
   const PAGE_SIZE = 12;
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -101,7 +98,30 @@ export default function RestaurantMenuPage() {
   };
 
   const handleToggleAvailability = async (item: RestaurantMenuItem) => {
-    // TODO: Implement toggle availability API call
+    const menuId = Number(item.id);
+    const nextAvailability = !item.isAvailable;
+
+    try {
+      const updated = await menuApi.updateMenuAvailability(
+        menuId,
+        nextAvailability
+      );
+
+      setMenuItems((prev) =>
+        prev.map((menuItem) =>
+          menuItem.id === menuId
+            ? { ...menuItem, available: updated.available ?? nextAvailability }
+            : menuItem
+        )
+      );
+      setError(null);
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err
+          : new Error("Failed to update availability")
+      );
+    }
   };
 
   const handlePageChange = (page: number) => {
