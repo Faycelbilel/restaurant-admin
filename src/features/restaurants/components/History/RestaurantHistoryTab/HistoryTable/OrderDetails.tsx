@@ -42,6 +42,20 @@ export function OrderModal({ order, open, onClose }: OrderModalProps) {
     [order.items]
   );
 
+  // Calculate totals from items - use lineTotal which is the final item price
+  const itemsTotal = menuItems.reduce(
+    (sum, item) => sum + (item.lineTotal || 0),
+    0
+  );
+  const totalExtras = menuItems.reduce(
+    (sum, item) => sum + (item.extrasTotal || 0),
+    0
+  );
+  const totalDiscounts = menuItems.reduce(
+    (sum, item) => sum + (item.promotionDiscount || 0),
+    0
+  );
+
   return (
     <div className="fixed top-0 left-0 right-0 bottom-0 z-[9999] flex items-center justify-center p-4">
       <div
@@ -119,29 +133,64 @@ export function OrderModal({ order, open, onClose }: OrderModalProps) {
             {menuItems.length > 0 ? (
               <div className="space-y-3">
                 {menuItems.map((item, index) => (
-                  <div
-                    key={index}
-                    className="flex justify-between items-start p-3 bg-gray-50 rounded"
-                  >
-                    <div className="flex-1">
-                      <p className="font-medium">
-                        {item.quantity || 1} ×{" "}
-                        {item.menuItemName || "Unnamed item"}
+                  <div key={index} className="p-3 bg-gray-50 rounded">
+                    <div className="flex justify-between items-start">
+                      <div className="flex-1">
+                        <p className="font-medium">
+                          {item.quantity || 1} ×{" "}
+                          {item.menuItemName || "Unnamed item"}
+                        </p>
+                        {item.specialInstructions && (
+                          <p className="text-xs text-gray-500 italic mt-1">
+                            "{item.specialInstructions}"
+                          </p>
+                        )}
+                      </div>
+                      <p className="font-semibold text-right ml-4">
+                        {(item.lineTotal || 0).toFixed(2)} TND
                       </p>
+                    </div>
+
+                    {/* Price Breakdown */}
+                    <div className="mt-2 pl-4 space-y-1 text-xs text-gray-600 border-l-2 border-gray-300">
+                      <div className="flex justify-between">
+                        <span>
+                          Base price ({item.quantity || 1} ×{" "}
+                          {(item.unitBasePrice || 0).toFixed(2)} TND)
+                        </span>
+                        <span>{(item.lineSubtotal || 0).toFixed(2)} TND</span>
+                      </div>
+
                       {item.extras && item.extras.length > 0 && (
-                        <p className="text-xs text-gray-600 mt-1">
-                          + {item.extras.join(", ")}
-                        </p>
+                        <>
+                          <div className="flex justify-between text-blue-600">
+                            <span>Extras: {item.extras.join(", ")}</span>
+                            <span>
+                              +{(item.extrasTotal || 0).toFixed(2)} TND
+                            </span>
+                          </div>
+                        </>
                       )}
-                      {item.specialInstructions && (
-                        <p className="text-xs text-gray-500 italic mt-1">
-                          "{item.specialInstructions}"
-                        </p>
+
+                      {item.promotionDiscount != null &&
+                        item.promotionDiscount > 0 && (
+                          <div className="flex justify-between text-green-600">
+                            <span>Discount</span>
+                            <span>
+                              -{item.promotionDiscount.toFixed(2)} TND
+                            </span>
+                          </div>
+                        )}
+
+                      {(item.unitPrice !== item.unitBasePrice ||
+                        (item.extrasTotal || 0) > 0 ||
+                        (item.promotionDiscount || 0) > 0) && (
+                        <div className="flex justify-between font-medium text-gray-800 pt-1 border-t border-gray-300">
+                          <span>Item Total</span>
+                          <span>{(item.lineTotal || 0).toFixed(2)} TND</span>
+                        </div>
                       )}
                     </div>
-                    <p className="font-semibold text-right ml-4">
-                      {(item.lineTotal || 0).toFixed(2)} TND
-                    </p>
                   </div>
                 ))}
               </div>
@@ -156,21 +205,39 @@ export function OrderModal({ order, open, onClose }: OrderModalProps) {
           {order.payment && (
             <div className="border-t pt-4 space-y-2">
               <div className="flex justify-between text-sm">
-                <span>Subtotal</span>
-                <span>{(order.payment.subtotal || 0).toFixed(2)} TND</span>
+                <span>Items Total</span>
+                <span>{itemsTotal.toFixed(2)} TND</span>
               </div>
+
               {order.payment.deliveryFee != null && (
                 <div className="flex justify-between text-sm">
                   <span>Delivery Fee</span>
-                  <span>{order.payment.deliveryFee.toFixed(2)} TND</span>
+                  <span>+{order.payment.deliveryFee.toFixed(2)} TND</span>
                 </div>
               )}
+
               {order.payment.serviceFee != null && (
                 <div className="flex justify-between text-sm">
                   <span>Service Fee</span>
-                  <span>{order.payment.serviceFee.toFixed(2)} TND</span>
+                  <span>+{order.payment.serviceFee.toFixed(2)} TND</span>
                 </div>
               )}
+
+              {order.payment.tip != null && order.payment.tip > 0 && (
+                <div className="flex justify-between text-sm text-purple-600">
+                  <span>Tip</span>
+                  <span>+{order.payment.tip.toFixed(2)} TND</span>
+                </div>
+              )}
+
+              {order.payment.couponDiscount != null &&
+                order.payment.couponDiscount > 0 && (
+                  <div className="flex justify-between text-sm text-green-600">
+                    <span>Coupon Discount</span>
+                    <span>-{order.payment.couponDiscount.toFixed(2)} TND</span>
+                  </div>
+                )}
+
               <div className="flex justify-between font-bold text-lg pt-2 border-t">
                 <span>Total</span>
                 <span>{(order.payment.total || 0).toFixed(2)} TND</span>

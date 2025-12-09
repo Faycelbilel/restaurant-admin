@@ -114,6 +114,7 @@ export interface OrderApiResponse {
     tipAmount?: number;
     totalBeforeTip?: number;
     cashToCollect?: number;
+    tip?: number;
     status?: string;
     paymentUrl?: string;
     paymentReference?: string;

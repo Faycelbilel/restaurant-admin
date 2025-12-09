@@ -33,11 +33,13 @@ export default function OperatingHours() {
   };
 
   const handleDeleteSpecialDay = async (id: number) => {
+    setSpecialDays((prev) => prev.filter((d) => d.id !== id));
+
     try {
       await operatingHoursService.deleteSpecialDay(id);
-      setSpecialDays((prev) => prev.filter((d) => d.id !== id));
     } catch (error) {
       console.log("Error deleting special day:", error);
+      fetchSchedule();
     }
   };
 

@@ -59,7 +59,7 @@ export const orderApi = {
 
   /**
    * Get restaurant orders with date range filtering
-   * FIXED: Map backend → frontend structure
+   * FIXED: Map backend → frontend structure with complete payment details
    */
 async getRestaurantOrders(
   _restaurantId: number, 
@@ -70,7 +70,6 @@ async getRestaurantOrders(
 ): Promise<OrdersPagedResponse> {
   const searchParams = new URLSearchParams();
   
-  // ✅ Backend expects 'from' and 'to', not 'startDate' and 'endDate'
   if (startDate) searchParams.append("from", startDate);
   if (endDate) searchParams.append("to", endDate);
   searchParams.append("page", page.toString());
@@ -102,7 +101,29 @@ async getRestaurantOrders(
     deliveryAddress: item.delivery?.address || item.savedAddress?.formattedAddress || "—",
     savedAddress: item.savedAddress,
     delivery: item.delivery,
-    payment: item.payment,
+    client: item.client,
+    restaurant: item.restaurant,
+    // Map complete payment object with all fields
+    payment: item.payment ? {
+      subtotal: item.payment.subtotal,
+      extrasTotal: item.payment.extrasTotal,
+      total: item.payment.total,
+      itemsSubtotal: item.payment.itemsSubtotal,
+      promotionDiscount: item.payment.promotionDiscount,
+      couponDiscount: item.payment.couponDiscount,
+      itemsTotal: item.payment.itemsTotal,
+      deliveryFee: item.payment.deliveryFee,
+      serviceFee: item.payment.serviceFee,
+      tipPercentage: item.payment.tipPercentage,
+      tipAmount: item.payment.tipAmount,
+      totalBeforeTip: item.payment.totalBeforeTip,
+      cashToCollect: item.payment.cashToCollect,
+      tip: item.payment.tip || item.payment.tipAmount, // Handle both field names
+      status: item.payment.status,
+      paymentUrl: item.payment.paymentUrl,
+      paymentReference: item.payment.paymentReference,
+      environment: item.payment.environment,
+    } : undefined,
   }));
 
   return {
