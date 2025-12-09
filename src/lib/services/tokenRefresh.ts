@@ -41,10 +41,24 @@ export async function fetchWithAuth(
   url: string,
   options: RequestInit = {}
 ): Promise<Response> {
-  const accessToken =
-    globalThis.window === undefined
-      ? null
-      : localStorage.getItem("accessToken");
+  const hasWindow = globalThis.window !== undefined;
+  const storedAccessToken = hasWindow
+    ? localStorage.getItem("accessToken")
+    : null;
+  const storedRefreshToken = hasWindow
+    ? localStorage.getItem("refreshToken")
+    : null;
+
+  let accessToken = storedAccessToken;
+
+  // Ensure we refresh first if no access token but refresh token exists (initial page load)
+  if (!accessToken && storedRefreshToken) {
+    try {
+      accessToken = await refreshAccessToken();
+    } catch (error) {
+      throw error;
+    }
+  }
 
   // Don't override Content-Type if body is FormData (browser will set it with boundary)
   const headers: HeadersInit = {
