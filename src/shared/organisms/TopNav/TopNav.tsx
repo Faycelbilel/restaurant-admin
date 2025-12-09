@@ -3,9 +3,9 @@
 import { useState } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { Home, ChevronRight, LogOut, Menu } from "lucide-react";
+import { ChevronRight, LogOut, Menu } from "lucide-react";
 import { Avatar, Button, Text } from "@/shared/atoms";
-import { ROUTE_LABELS } from "@/shared/configs";
+import { getRouteLabel } from "@/shared/configs";
 import { AvatarSize, ButtonType, ButtonVariant, TextElement } from "@/shared/types/enums";
 import { useAuth } from "@/shared/contexts";
 
@@ -15,7 +15,7 @@ interface TopNavProps {
 
 export function TopNav({ onMenuClick }: TopNavProps = {}) {
   const pathname = usePathname();
-  const currentLabel = ROUTE_LABELS[pathname] || "Home";
+  const currentLabel = getRouteLabel(pathname);
   const { user, logout } = useAuth();
   const [showUserMenu, setShowUserMenu] = useState(false);
 
@@ -33,23 +33,9 @@ export function TopNav({ onMenuClick }: TopNavProps = {}) {
         </Button>
         <nav aria-label="Breadcrumb" className="text-sm text-gray-500">
           <ol className="flex items-center gap-2">
-            <li className="flex items-center gap-2">
-              <Link
-                href="/"
-                className="flex items-center gap-2 hover:text-primary transition-colors"
-              >
-                <Home className="h-4 w-4" />
-                <Text as={TextElement.Span} className="hidden sm:inline">Home</Text>
-              </Link>
+            <li className="flex items-center gap-2 font-semibold text-gray-800">
+              <Text as={TextElement.Span}>{currentLabel}</Text>
             </li>
-            {pathname !== "/" && pathname !== "/home" && (
-              <>
-                <li>
-                  <ChevronRight className="h-3 w-3 text-gray-300" />
-                </li>
-                <li className="font-semibold text-gray-800">{currentLabel}</li>
-              </>
-            )}
           </ol>
         </nav>
       </div>
