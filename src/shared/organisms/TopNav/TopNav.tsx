@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { Home, ChevronRight, Bell, LogOut, Menu } from "lucide-react";
+import { Home, ChevronRight, LogOut, Menu } from "lucide-react";
 import { Avatar, Button, Text } from "@/shared/atoms";
 import { ROUTE_LABELS } from "@/shared/configs";
 import { AvatarSize, ButtonType, ButtonVariant, TextElement } from "@/shared/types/enums";
@@ -55,19 +55,6 @@ export function TopNav({ onMenuClick }: TopNavProps = {}) {
       </div>
 
       <div className="flex items-center justify-center gap-4 md:justify-end">
-        <Button
-          type={ButtonType.Button}
-          variant={ButtonVariant.Ghost}
-          className="relative h-11 w-11 rounded-full border border-gray-200 p-0 text-gray-500 hover:text-primary hover:bg-transparent"
-        >
-          <Bell className="h-5 w-5" />
-          <Text 
-            as={TextElement.Span}
-            className="absolute right-2 top-2 h-2 w-2 rounded-full bg-primary"
-          />
-          <Text as={TextElement.Span} className="sr-only">Notifications</Text>
-        </Button>
-
         <div className="relative">
           <button
             type="button"
