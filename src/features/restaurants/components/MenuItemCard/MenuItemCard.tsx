@@ -52,7 +52,7 @@ export function MenuItemCard({
 
   return (
     <div
-      className="overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm"
+      className="group flex h-full flex-col overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm transition duration-200 hover:-translate-y-1 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-primary/30"
       onClick={handleCardClick}
       role="button"
       tabIndex={0}
@@ -64,54 +64,50 @@ export function MenuItemCard({
       }}
     >
       
-      <div className="relative h-40 w-full bg-gray-100">
+      <div className="relative aspect-[4/3] w-full bg-gray-100">
         <Image
           src={imageUrl}
           alt={item.name}
           fill
-          className="object-cover"
+          className="object-cover transition duration-300 group-hover:scale-105"
           sizes="(max-width: 768px) 100vw, (max-width: 1024px) 33vw, 25vw"
           unoptimized
         />
+        {item.price && (
+          <div className="absolute right-3 top-3 rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-gray-900 shadow-sm backdrop-blur">
+            {item.price}
+          </div>
+        )}
       </div>
 
-      <div className="p-4">
-        <div className="flex items-start justify-between gap-2 mb-3">
-          <div className="flex-1 min-w-0">
+      <div className="flex flex-1 flex-col gap-3 p-4">
+        <div className="flex items-start justify-between gap-2">
+          <div className="min-w-0 flex-1">
             <Text 
               as={TextElement.H3}
               weight={TextWeight.Semibold}
-              className="text-sm text-gray-900 truncate"
+              className="text-base text-gray-900 leading-tight"
             >
               {item.name}
             </Text>
             <Text 
               as={TextElement.Paragraph}
-              className="text-xs text-gray-500 mt-0.5"
+              className="text-xs text-gray-500 mt-1 truncate"
             >
               {item.category}
             </Text>
           </div>
-          {item.price && (
-            <Text 
-              as={TextElement.Paragraph}
-              weight={TextWeight.Bold}
-              className="text-sm text-gray-900 shrink-0"
-            >
-              {item.price}
-            </Text>
-          )}
         </div>
 
-        <div className="flex items-center justify-between gap-2">
-          <div className="flex items-center gap-1.5">
+        <div className="mt-auto flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-2 rounded-full bg-gray-50 px-2.5 py-1">
             <span
               className={cn(
-                "h-1.5 w-1.5 rounded-full",
+                "h-2 w-2 rounded-full",
                 item.isAvailable ? "bg-success" : "bg-gray-300"
               )}
             />
-            <span className="text-xs text-gray-600">
+            <span className="text-xs font-medium text-gray-700">
               {item.isAvailable ? "Available" : "Unavailable"}
             </span>
           </div>
@@ -147,6 +143,7 @@ export function MenuItemCard({
                 <Switch
                   enabled={item.isAvailable}
                   onToggle={() => onToggleAvailability(item)}
+                  size="sm"
                 />
               </div>
             )}

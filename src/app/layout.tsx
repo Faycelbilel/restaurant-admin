@@ -3,8 +3,8 @@ import { Providers } from "./(dashboard)/providers";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Rider Operations Dashboard",
-  description: "Manage riders and daily operations with clarity.",
+  title: "Foodify Restaurant",
+  description: "Manage Restaurants and daily operations with clarity.",
   icons: {
     icon: "/icons/Asset 34.svg",
   },

@@ -15,7 +15,7 @@ interface TopNavProps {
 
 export function TopNav({ onMenuClick }: TopNavProps = {}) {
   const pathname = usePathname();
-  const currentLabel = ROUTE_LABELS[pathname] || "Dashboard";
+  const currentLabel = ROUTE_LABELS[pathname] || "Home";
   const { user, logout } = useAuth();
   const [showUserMenu, setShowUserMenu] = useState(false);
 

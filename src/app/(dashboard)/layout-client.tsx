@@ -39,20 +39,19 @@ export function DashboardLayoutClient({
   const navItems: NavItem[] = useMemo(
     () => [
       {
-        label: "Dashboard",
-        iconSrc: "/icons/dashboard.svg",
+        label: "Home",
+        iconSrc: "/icons/home.svg",
         href: "/restaurants",
       },
       {
-        label: "History",
-        iconSrc: "/icons/history.svg",
-        href: "/restaurants/history",
+        label: "Analytics",
+        iconSrc: "/icons/analytics.svg",
+        href: "/restaurants/analytics",
       },
-      { label: "Menu", iconSrc: "/icons/menu.svg", href: "/restaurants/menu" },
       {
-        label: "Billing",
-        iconSrc: "/icons/billing.svg",
-        href: "/restaurants/billing",
+        label: "Menu",
+        iconSrc: "/icons/menu.svg",
+        href: "/restaurants/menu"
       },
       {
         label: "Operating Hours",
@@ -60,15 +59,20 @@ export function DashboardLayoutClient({
         href: "/restaurants/operating-hours",
       },
       {
-        label: "Analytics",
-        iconSrc: "/icons/analytics.svg",
-        href: "/restaurants/analytics",
+        label: "History",
+        iconSrc: "/icons/history.svg",
+        href: "/restaurants/history",
+      },
+      {
+        label: "Billing",
+        iconSrc: "/icons/billing.svg",
+        href: "/restaurants/billing",
       },
     ],
     []
   );
 
-   return (
+  return (
     <AuthGuard>
       <div className="flex h-screen text-gray-800">
         <Sidebar
@@ -77,6 +81,7 @@ export function DashboardLayoutClient({
           navItems={navItems}
           isMobileOpen={isMobileSidebarOpen}
           onCloseMobile={() => setIsMobileSidebarOpen(false)}
+          onLogout={logout}
         />
         {isMobileSidebarOpen && (
           <button

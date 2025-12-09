@@ -15,6 +15,7 @@ export function Sidebar({
   navItems,
   isMobileOpen = false,
   onCloseMobile,
+  onLogout,
 }: SidebarProps) {
   const pathname = usePathname();
   const isCompact = isMobileOpen ? false : isCollapsed;
@@ -120,6 +121,11 @@ export function Sidebar({
               BASE_TRANSITION,
               isCompact ? "h-12 w-12 p-0" : "w-full gap-2 px-4 py-3"
             )}
+            onClick={() => {
+              onLogout?.();
+              onCloseMobile?.();
+            }}
+            aria-label="Logout"
           >
             <Icon src="/icons/logout.svg" alt="Logout" className="h-5 w-5" />
             <span className={isCompact ? "sr-only" : "text-sm font-semibold"}>

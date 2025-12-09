@@ -6,4 +6,5 @@ export interface SidebarProps {
   navItems: NavItem[];
   isMobileOpen?: boolean;
   onCloseMobile?: () => void;
+  onLogout?: () => void;
 }

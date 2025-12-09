@@ -49,6 +49,11 @@ export function DataTable<TData = unknown>({
       ? data.slice(startIndex, endIndex)
       : data;
 
+  const minGridWidth = useMemo(
+    () => Math.max(columns.length * 140, 640),
+    [columns.length]
+  );
+
   const gridTemplate = useMemo(() => {
     if (gridTemplateColumns) return gridTemplateColumns;
     if (columns.every((col) => col.width)) {
@@ -95,45 +100,60 @@ export function DataTable<TData = unknown>({
             tableClassName
           )}
         >
-          {showHeader && (
+          <div className="overflow-x-auto">
             <div
-              className="hidden rounded-xl bg-gray-50 px-6 py-4 text-xs font-semibold tracking-wide text-gray-600 shadow-sm lg:grid"
+              className="min-w-full"
               style={{
-                gridTemplateColumns: gridTemplate,
+                minWidth: `${minGridWidth}px`,
               }}
             >
-              {columns.map((column) => (
-                <span key={column.key} className={column.headerClassName}>
-                  {column.header}
-                </span>
-              ))}
-            </div>
-          )}
-          <div className="divide-y divide-gray-100">
-            {paginatedData.map((row, index) => (
-              <div
-                key={getRowKey(row, index)}
-                className={cn(
-                  "grid grid-cols-1 gap-3 px-6 py-5 text-sm text-gray-700 lg:grid-cols-[auto]",
-                  hoverable && "transition hover:bg-gray-50",
-                  onRowClick && "cursor-pointer"
-                )}
-                style={{
-                  gridTemplateColumns: gridTemplate,
-                }}
-                onClick={() => onRowClick?.(row)}
-              >
-                {columns.map((column) => (
-                  <div key={column.key} className={column.cellClassName}>
-                    {column.render
-                      ? column.render(row)
-                      : column.accessor
-                        ? column.accessor(row)
-                        : null}
+              {showHeader && (
+                <div
+                  className="grid items-center rounded-xl bg-gray-50 px-6 py-4 text-xs font-semibold tracking-wide text-gray-600 shadow-sm"
+                  style={{
+                    gridTemplateColumns: gridTemplate,
+                  }}
+                >
+                  {columns.map((column) => (
+                    <span
+                      key={column.key}
+                      className={cn("text-center", column.headerClassName)}
+                    >
+                      {column.header}
+                    </span>
+                  ))}
+                </div>
+              )}
+              <div className="divide-y divide-gray-100">
+                {paginatedData.map((row, index) => (
+                  <div
+                    key={getRowKey(row, index)}
+                    className={cn(
+                      "grid grid-cols-1 gap-3 px-6 py-5 text-sm text-gray-700 lg:grid-cols-[auto]",
+                      hoverable && "transition hover:bg-gray-50",
+                      onRowClick && "cursor-pointer"
+                    )}
+                    style={{
+                      gridTemplateColumns: gridTemplate,
+                    }}
+                    onClick={() => onRowClick?.(row)}
+                  >
+                    {columns.map((column) => (
+                      <div
+                        key={column.key}
+                        className={cn("text-center", column.cellClassName)}
+                      >
+                        {column.render
+                          ? column.render(row)
+                          : column.accessor
+                            ? column.accessor(row)
+                            : null}
+                      </div>
+                    ))}
                   </div>
                 ))}
               </div>
-            ))}
+            </div>
           </div>
         </div>
 
@@ -172,14 +192,17 @@ export function DataTable<TData = unknown>({
         )}
       >
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-100">
+          <table className="min-w-[720px] divide-y divide-gray-100">
             {showHeader && (
               <thead className="bg-gray-50">
-                <tr className="text-left text-xs font-semibold tracking-wide text-gray-600">
+                <tr className="text-xs font-semibold tracking-wide text-gray-600">
                   {columns.map((column) => (
                     <th
                       key={column.key}
-                      className={cn("px-6 py-4", column.headerClassName)}
+                      className={cn(
+                        "px-6 py-4 text-center",
+                        column.headerClassName
+                      )}
                     >
                       {column.header}
                     </th>
@@ -200,7 +223,7 @@ export function DataTable<TData = unknown>({
                   {columns.map((column) => (
                     <td
                       key={column.key}
-                      className={cn("px-6 py-4", column.cellClassName)}
+                      className={cn("px-6 py-4 text-center", column.cellClassName)}
                     >
                       {column.render
                         ? column.render(row)
