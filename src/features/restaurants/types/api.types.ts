@@ -7,6 +7,37 @@ export interface RestaurantApiResponse {
   todaySchedule: string | null;
 }
 
+export interface InvoicesPagedResponse {
+  content: InvoiceApiResponse[];
+  pageable: Pageable;
+  last: boolean;
+  totalElements: number;
+  totalPages: number;
+  size: number;
+  number: number;
+  sort: Sort;
+  first: boolean;
+  numberOfElements: number;
+  empty: boolean;
+}
+export interface GetRestaurantInvoicesParams {
+  startDate: string; // ISO date string YYYY-MM-DD
+  endDate: string; // ISO date string YYYY-MM-DD
+  page?: number;
+  size?: number;
+}
+export interface InvoiceApiResponse {
+  id: number;
+  invoiceNumber: string;
+  invoiceUrl: string;
+  restaurantId: number;
+  restaurantName: string;
+  receivedAmount: number;
+  generationDate: string; // ISO date string YYYY-MM-DD
+  emailSentAt: string; // ISO datetime string
+  periodStartDate: string; // ISO date string YYYY-MM-DD
+  periodEndDate: string; // ISO date string YYYY-MM-DD
+}
 export interface Pageable {
   pageNumber: number;
   pageSize: number;
