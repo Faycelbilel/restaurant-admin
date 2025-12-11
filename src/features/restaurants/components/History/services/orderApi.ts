@@ -103,7 +103,6 @@ async getRestaurantOrders(
     delivery: item.delivery,
     client: item.client,
     restaurant: item.restaurant,
-    // Map complete payment object with all fields
     payment: item.payment ? {
       subtotal: item.payment.subtotal,
       extrasTotal: item.payment.extrasTotal,
@@ -118,7 +117,7 @@ async getRestaurantOrders(
       tipAmount: item.payment.tipAmount,
       totalBeforeTip: item.payment.totalBeforeTip,
       cashToCollect: item.payment.cashToCollect,
-      tip: item.payment.tip || item.payment.tipAmount, // Handle both field names
+      tip: item.payment.tip || item.payment.tipAmount, 
       status: item.payment.status,
       paymentUrl: item.payment.paymentUrl,
       paymentReference: item.payment.paymentReference,

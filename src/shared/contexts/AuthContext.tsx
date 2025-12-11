@@ -34,7 +34,9 @@ export const getGlobalAccessToken = (): string | null => {
 
 const normalizeUser = (rawUser: unknown): User => {
   const parsed = rawUser as Partial<User> & Record<string, unknown>;
-  const normalizedRole = ((parsed.role as string) || "").toUpperCase() as UserRole;
+  const normalizedRole = (
+    (parsed.role as string) || ""
+  ).toUpperCase() as UserRole;
   const safeRole = Object.values(UserRole).includes(normalizedRole)
     ? normalizedRole
     : UserRole.RestaurantAdmin;
@@ -54,9 +56,12 @@ const normalizeUser = (rawUser: unknown): User => {
   };
 };
 
-const normalizeRestaurant = (rawRestaurant: unknown): RestaurantAuthInfo | null => {
+const normalizeRestaurant = (
+  rawRestaurant: unknown
+): RestaurantAuthInfo | null => {
   if (!rawRestaurant || typeof rawRestaurant !== "object") return null;
-  const parsed = rawRestaurant as Partial<RestaurantAuthInfo> & Record<string, unknown>;
+  const parsed = rawRestaurant as Partial<RestaurantAuthInfo> &
+    Record<string, unknown>;
   const id = parsed.id !== undefined ? String(parsed.id) : undefined;
 
   if (!id) return null;
@@ -82,7 +87,12 @@ const normalizeRestaurant = (rawRestaurant: unknown): RestaurantAuthInfo | null 
     licenseNumber: parsed.licenseNumber as string | undefined,
     taxId: parsed.taxId as string | undefined,
     latitude: typeof parsed.latitude === "number" ? parsed.latitude : undefined,
-    longitude: typeof parsed.longitude === "number" ? parsed.longitude : undefined,
+    longitude:
+      typeof parsed.longitude === "number" ? parsed.longitude : undefined,
+    commissionRate:
+      typeof parsed.commissionRate === "number"
+        ? parsed.commissionRate
+        : undefined,
   };
 };
 
@@ -105,11 +115,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
     const checkAuth = async () => {
       const storedUser = localStorage.getItem("user");
       const storedRestaurant = localStorage.getItem("restaurant");
-      
+
       // Always try to refresh token on app load
       try {
         const newAccessToken = await authApi.refresh();
-        
+
         if (storedUser) {
           const parsedUser = JSON.parse(storedUser);
           setUser(normalizeUser(parsedUser));
@@ -123,7 +133,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         } else {
           setRestaurant(null);
         }
-        
+
         setAccessToken(newAccessToken);
         setStatus(AuthStatus.Authenticated);
         // Clear any stored token from localStorage after refresh
@@ -131,7 +141,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       } catch {
         // Refresh failed, check for stored credentials as fallback
         const storedToken = localStorage.getItem("accessToken");
-        
+
         if (storedUser && storedToken) {
           try {
             const parsedUser = JSON.parse(storedUser);
@@ -160,41 +170,47 @@ export function AuthProvider({ children }: AuthProviderProps) {
     checkAuth();
   }, []);
 
-  const login = useCallback(async (credentials: LoginCredentials): Promise<void> => {
-    try {
-      const response = await authApi.login(credentials);
+  const login = useCallback(
+    async (credentials: LoginCredentials): Promise<void> => {
+      try {
+        const response = await authApi.login(credentials);
 
-      const normalizedRole =
-        (response.user.role?.toUpperCase() as UserRole) || UserRole.RestaurantAdmin;
-      const restaurantData = normalizeRestaurant(response.restaurant);
-      const restaurantId =
-        restaurantData?.id ||
-        response.user.restaurantId?.toString() ||
-        response.user.id?.toString() ||
-        "";
+        const normalizedRole =
+          (response.user.role?.toUpperCase() as UserRole) ||
+          UserRole.RestaurantAdmin;
+        const restaurantData = normalizeRestaurant(response.restaurant);
+        console.log("Commission Rate:", restaurantData?.commissionRate);
 
-      const userData: User = {
-        id: response.user.id.toString(),
-        email: response.user.email,
-        name: response.user.name,
-        role: normalizedRole,
-        restaurantId,
-      };
+        const restaurantId =
+          restaurantData?.id ||
+          response.user.restaurantId?.toString() ||
+          response.user.id?.toString() ||
+          "";
 
-      setUser(userData);
-      setRestaurant(restaurantData);
-      setAccessToken(response.accessToken);
-      setStatus(AuthStatus.Authenticated);
-      localStorage.setItem("user", JSON.stringify(userData));
-      if (restaurantData) {
-        localStorage.setItem("restaurant", JSON.stringify(restaurantData));
-      } else {
-        localStorage.removeItem("restaurant");
-      }
+        const userData: User = {
+          id: response.user.id.toString(),
+          email: response.user.email,
+          name: response.user.name,
+          role: normalizedRole,
+          restaurantId,
+        };
 
-      router.push("/restaurants");
-    } catch {}
-  }, [router]);
+        setUser(userData);
+        setRestaurant(restaurantData);
+        setAccessToken(response.accessToken);
+        setStatus(AuthStatus.Authenticated);
+        localStorage.setItem("user", JSON.stringify(userData));
+        if (restaurantData) {
+          localStorage.setItem("restaurant", JSON.stringify(restaurantData));
+        } else {
+          localStorage.removeItem("restaurant");
+        }
+
+        router.push("/restaurants");
+      } catch {}
+    },
+    [router]
+  );
 
   const logout = useCallback(async (): Promise<void> => {
     try {

@@ -20,6 +20,9 @@ export interface RestaurantAuthInfo {
   descriptionEn?: string;
   descriptionFr?: string;
   descriptionAr?: string;
+  
+commissionRate?:number;
+
   rating?: number;
   imageUrl?: string;
   iconUrl?: string;
