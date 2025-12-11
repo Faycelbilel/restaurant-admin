@@ -1,5 +1,6 @@
 import React from "react";
 import { MenuItem, OrderApiResponse } from "../../services/api.types";
+import { useAuth } from "@/shared";
 
 interface OrderModalProps {
   order: OrderApiResponse | null;
@@ -36,6 +37,20 @@ export function OrderModal({ order, open, onClose }: OrderModalProps) {
     "—";
 
   const totalAmount = order.payment?.total ?? order.amount ?? 0;
+  const { restaurant } = useAuth();
+  const commission = restaurant?.commissionRate ?? 0;
+
+  const computedTotalWithCommission = React.useMemo(() => {
+    const orderTotal = order.payment?.itemsTotal ?? 0;
+    const couponDiscount = order.payment?.couponDiscount ?? 0;
+
+    const adjustedTotal = orderTotal - couponDiscount;
+    const commissionAmount = adjustedTotal * commission;
+    const tvaAmount = commissionAmount * 0.19;
+
+    const total = adjustedTotal - (commissionAmount + tvaAmount);
+    return +total.toFixed(2);
+  }, [order.payment?.itemsTotal, order.payment?.couponDiscount, commission]);
 
   const menuItems: MenuItem[] = React.useMemo(
     () => order.items ?? [],
@@ -151,7 +166,6 @@ export function OrderModal({ order, open, onClose }: OrderModalProps) {
                       </p>
                     </div>
 
-                    {/* Price Breakdown */}
                     <div className="mt-2 pl-4 space-y-1 text-xs text-gray-600 border-l-2 border-gray-300">
                       <div className="flex justify-between">
                         <span>
@@ -187,7 +201,7 @@ export function OrderModal({ order, open, onClose }: OrderModalProps) {
                         (item.promotionDiscount || 0) > 0) && (
                         <div className="flex justify-between font-medium text-gray-800 pt-1 border-t border-gray-300">
                           <span>Item Total</span>
-                          <span>{(item.lineTotal || 0).toFixed(2)} TND</span>
+                          <span>{(item.lineTotal || 0).toFixed()} TND</span>
                         </div>
                       )}
                     </div>
@@ -204,43 +218,9 @@ export function OrderModal({ order, open, onClose }: OrderModalProps) {
 
           {order.payment && (
             <div className="border-t pt-4 space-y-2">
-              <div className="flex justify-between text-sm">
-                <span>Items Total</span>
-                <span>{itemsTotal.toFixed(2)} TND</span>
-              </div>
-
-              {order.payment.deliveryFee != null && (
-                <div className="flex justify-between text-sm">
-                  <span>Delivery Fee</span>
-                  <span>+{order.payment.deliveryFee.toFixed(2)} TND</span>
-                </div>
-              )}
-
-              {order.payment.serviceFee != null && (
-                <div className="flex justify-between text-sm">
-                  <span>Service Fee</span>
-                  <span>+{order.payment.serviceFee.toFixed(2)} TND</span>
-                </div>
-              )}
-
-              {order.payment.tip != null && order.payment.tip > 0 && (
-                <div className="flex justify-between text-sm text-purple-600">
-                  <span>Tip</span>
-                  <span>+{order.payment.tip.toFixed(2)} TND</span>
-                </div>
-              )}
-
-              {order.payment.couponDiscount != null &&
-                order.payment.couponDiscount > 0 && (
-                  <div className="flex justify-between text-sm text-green-600">
-                    <span>Coupon Discount</span>
-                    <span>-{order.payment.couponDiscount.toFixed(2)} TND</span>
-                  </div>
-                )}
-
               <div className="flex justify-between font-bold text-lg pt-2 border-t">
                 <span>Total</span>
-                <span>{(order.payment.total || 0).toFixed(2)} TND</span>
+                <span>{computedTotalWithCommission.toFixed(3)} TND</span>
               </div>
             </div>
           )}

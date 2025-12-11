@@ -29,7 +29,6 @@ export function DataTable<TData = unknown>({
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(initialPageSize);
 
-  // Use external pagination if provided, otherwise use internal
   const isExternalPagination = !!externalPagination;
   const activePage = isExternalPagination
     ? externalPagination.currentPage
@@ -41,7 +40,6 @@ export function DataTable<TData = unknown>({
     ? externalPagination.totalPages
     : Math.ceil(data.length / activePageSize);
 
-  // For internal pagination, slice the data
   const startIndex = (activePage - 1) * activePageSize;
   const endIndex = startIndex + activePageSize;
   const paginatedData =

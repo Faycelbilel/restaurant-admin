@@ -3,9 +3,9 @@
 import { useState } from "react";
 import { DataTable } from "@/shared/organisms";
 import { DataTableRenderMode } from "@/shared/types/enums";
-import { columns } from "./constants";
 import type { OrderApiResponse } from "../../services/api.types";
 import { OrderModal } from "./OrderDetails";
+import { useColumns } from "./constants";
 
 interface HistoryTableProps {
   orders: OrderApiResponse[];
@@ -42,7 +42,7 @@ export function HistoryTable({
   return (
     <>
       <DataTable<OrderApiResponse>
-        columns={columns}
+        columns={useColumns()} 
         data={orders || []}
         getRowKey={(order) => order?.id?.toString() ?? crypto.randomUUID()}
         renderMode={DataTableRenderMode.Grid}

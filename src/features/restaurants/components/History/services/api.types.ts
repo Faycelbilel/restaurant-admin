@@ -1,4 +1,3 @@
-// types/order.types.ts (or wherever you keep your types)
 export interface MenuItem {
   items: never[];
   deliveryAddress: string | undefined;
@@ -24,7 +23,7 @@ export interface OrderApiResponse {
   deliveryAddress: string;
   paymentMethod: string;
   date: string;
-  items: MenuItem[]; // <- flat array, not nested
+  items: MenuItem[]; 
 
   savedAddress?: {
     id: string;
