@@ -94,7 +94,7 @@ export default function RestaurantLayout({
     );
   }
 
-  const isOpen = !restaurant.manuallyClosed;
+  const isOpen = restaurant.manuallyClosed;
 
   return (
     <div className="flex flex-col gap-6 pb-10">

@@ -44,7 +44,6 @@ export function RestaurantDashboardTab({ restaurant }: RestaurantDashboardTabPro
         </div>
       </section>
 
-      <div className="grid gap-6 lg:grid-cols-3">
         <Card padding={CardPadding.Large} className="lg:col-span-2">
           <Text as={TextElement.H3} size={TextSize.Medium} weight={TextWeight.Semibold}>
             Contact & Location
@@ -76,41 +75,6 @@ export function RestaurantDashboardTab({ restaurant }: RestaurantDashboardTabPro
             )}
           </div>
         </Card>
-
-        <Card padding={CardPadding.Large}>
-          <Text as={TextElement.H3} size={TextSize.Medium} weight={TextWeight.Semibold}>
-            Status
-          </Text>
-          <div className="mt-4 space-y-3 text-sm text-gray-700">
-            <div className="flex items-center justify-between">
-              <span>Manually Closed</span>
-              <span className="font-semibold">
-                {restaurant.manuallyClosed ? "Yes" : "No"}
-              </span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span>Images</span>
-              <span className="font-semibold">
-                {restaurant.images ? `${restaurant.images.length} images` : "None"}
-              </span>
-            </div>
-          </div>
-        </Card>
-      </div>
-
-      {restaurant.imageUrl && (
-        <Card padding={CardPadding.None} className="overflow-hidden">
-          <div className="relative h-72 w-full">
-            <Image
-              src={restaurant.imageUrl}
-              alt={restaurant.name}
-              fill
-              className="object-cover"
-              unoptimized
-            />
-          </div>
-        </Card>
-      )}
     </div>
   );
 }
