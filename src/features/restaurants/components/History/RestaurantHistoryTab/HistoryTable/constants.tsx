@@ -71,9 +71,9 @@ export const useColumns = (): ColumnDef<OrderApiResponse>[] => {
       cellClassName: "font-semibold text-gray-900",
       accessor: (order) => {
         const orderTotal = order.payment?.itemsTotal ?? 0;
-        const couponDiscount = order.payment?.couponDiscount ?? 0;
+        const restaurantDiscount = order.payment?.restaurantDiscount ?? 0;
 
-        const adjustedTotal = orderTotal - couponDiscount;
+        const adjustedTotal = orderTotal - restaurantDiscount;
         const commissionAmount = adjustedTotal * commission;
         const tvaAmount = commissionAmount * 0.19;
 

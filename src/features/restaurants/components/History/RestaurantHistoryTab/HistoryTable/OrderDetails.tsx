@@ -39,18 +39,25 @@ export function OrderModal({ order, open, onClose }: OrderModalProps) {
   const totalAmount = order.payment?.total ?? order.amount ?? 0;
   const { restaurant } = useAuth();
   const commission = restaurant?.commissionRate ?? 0;
+  console.log("Commission rate:", order);
+  const restaurantDiscount = order.payment?.restaurantDiscount ?? 0;
+  const platformDiscount = order.payment?.platformDiscount ?? 0;
+  const couponDiscount = order.payment?.couponDiscount ?? 0;
+  const formatCurrency = React.useCallback(
+    (value: number) => `${value.toFixed(3)} TND`,
+    []
+  );
 
   const computedTotalWithCommission = React.useMemo(() => {
     const orderTotal = order.payment?.itemsTotal ?? 0;
-    const couponDiscount = order.payment?.couponDiscount ?? 0;
 
-    const adjustedTotal = orderTotal - couponDiscount;
+    const adjustedTotal = orderTotal - restaurantDiscount;
     const commissionAmount = adjustedTotal * commission;
     const tvaAmount = commissionAmount * 0.19;
 
     const total = adjustedTotal - (commissionAmount + tvaAmount);
     return +total.toFixed(2);
-  }, [order.payment?.itemsTotal, order.payment?.couponDiscount, commission]);
+  }, [order.payment?.itemsTotal, restaurantDiscount, commission]);
 
   const menuItems: MenuItem[] = React.useMemo(
     () => order.items ?? [],
@@ -217,10 +224,45 @@ export function OrderModal({ order, open, onClose }: OrderModalProps) {
           </div>
 
           {order.payment && (
-            <div className="border-t pt-4 space-y-2">
+            <div className="border-t pt-4 space-y-3 text-sm">
+              <div className="flex justify-between text-gray-700">
+                <span>Items Total</span>
+                <span>{formatCurrency(order.payment?.itemsTotal ?? itemsTotal)}</span>
+              </div>
+
+              <div className="space-y-1">
+                <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+                  Discounts
+                </p>
+                {[
+                  { label: "Restaurant Discount", amount: restaurantDiscount },
+                  { label: "Platform Discount", amount: platformDiscount },
+                  {
+                    label: order.couponCode
+                      ? `Coupon Discount (${order.couponCode})`
+                      : "Coupon Discount",
+                    amount: couponDiscount,
+                  },
+                ].map(({ label, amount }) => (
+                  <div key={label} className="flex justify-between">
+                    <span className="text-gray-600">{label}</span>
+                    <span
+                      className={
+                        amount > 0
+                          ? "text-green-600 font-medium"
+                          : "text-gray-400"
+                      }
+                    >
+                      {amount > 0 ? "-" : ""}
+                      {formatCurrency(amount)}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
               <div className="flex justify-between font-bold text-lg pt-2 border-t">
                 <span>Total</span>
-                <span>{computedTotalWithCommission.toFixed(3)} TND</span>
+                <span>{formatCurrency(computedTotalWithCommission)}</span>
               </div>
             </div>
           )}

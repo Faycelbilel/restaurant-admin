@@ -122,6 +122,8 @@ async getRestaurantOrders(
       paymentUrl: item.payment.paymentUrl,
       paymentReference: item.payment.paymentReference,
       environment: item.payment.environment,
+      restaurantDiscount: item.payment.restaurantDiscount,
+      platformDiscount: item.payment.platformDiscount,
     } : undefined,
   }));
 

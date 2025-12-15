@@ -118,6 +118,8 @@ export interface OrderApiResponse {
     paymentUrl?: string;
     paymentReference?: string;
     environment?: string;
+    restaurantDiscount?: number;
+    platformDiscount?: number;
   };
 
   couponCode?: string;
